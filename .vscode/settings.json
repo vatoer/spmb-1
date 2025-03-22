@@ -1,0 +1,68 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always", // Apply ESLint fixes to all files on save
+    "source.fixAll": "always", // Apply all fixable code actions
+    "source.organizeImports": "always" // Automatically organize imports
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSaveMode": "file",
+
+  // Path alias suggestions for Next.js (if using jsconfig or tsconfig paths)
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+
+  // Tailwind CSS IntelliSense (if applicable)
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "javascriptreact": "javascriptreact",
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    "clsx\\(([^)]*)\\)", // For clsx utility
+    "classnames\\(([^)]*)\\)" // For classnames utility
+  ],
+
+  // Terminal settings
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  // "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+
+  // Version Control
+  "git.ignoreLimitWarning": true,
+
+  // Prettier settings
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Disable telemetry for privacy
+  "telemetry.telemetryLevel": "off",
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+
+  "cSpell.language": "en,id-id",
+
+  "auto-rename-tag.activationOnLanguage": ["html", "xml", "php", "javascript"],
+  "[sql]": {
+    "editor.defaultFormatter": "ms-ossdata.vscode-postgresql"
+  },
+  "cSpell.words": [
+    "dapo",
+    "Dikdasmen",
+    "Npsn",
+    "ortu",
+    "psql",
+    "tsvector",
+    "vatoer"
+  ]
+}
