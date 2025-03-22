@@ -7,6 +7,9 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSaveMode": "file",
+  "editor.wordWrap": "wordWrapColumn",
+  "editor.wordWrapColumn": 80,
+  "editor.tabSize": 2,
 
   // Path alias suggestions for Next.js (if using jsconfig or tsconfig paths)
   "typescript.preferences.importModuleSpecifier": "non-relative",
