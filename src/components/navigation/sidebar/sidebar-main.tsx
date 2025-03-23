@@ -54,11 +54,7 @@ const items = [
   },
 ];
 
-interface SidebarMenuItemProps {
-  className?: string;
-}
-
-export function SidebarMain({ className }: SidebarMenuItemProps) {
+export function SidebarMain() {
   return (
     <SidebarGroup className="md:flex">
       <SidebarGroupContent>

@@ -4,9 +4,9 @@ interface Window {
       token: string,
       options: {
         embedId: string;
-        onSuccess: (result: any) => void;
-        onPending: (result: any) => void;
-        onError: (result: any) => void;
+        onSuccess: (result: unknown) => void;
+        onPending: (result: unknown) => void;
+        onError: (result: unknown) => void;
         onClose: () => void;
       }
     ) => void;

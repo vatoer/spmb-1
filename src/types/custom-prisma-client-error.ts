@@ -14,13 +14,17 @@ export const isCustomPrismaClientError = (
     typeof error === "object" &&
     error !== null &&
     "code" in error &&
-    typeof (error as any).code === "string" &&
+    typeof (error as { code: unknown }).code === "string" &&
     "clientVersion" in error &&
-    typeof (error as any).clientVersion === "string" &&
-    (typeof (error as any).meta === "undefined" ||
-      typeof (error as any).meta === "object") &&
-    (typeof (error as any).batchRequestIdx === "undefined" ||
-      typeof (error as any).batchRequestIdx === "number") &&
-    typeof (error as any)[Symbol.toStringTag] === "string"
+    typeof (error as { clientVersion: unknown }).clientVersion === "string" &&
+    (typeof (error as { meta?: unknown }).meta === "undefined" ||
+      typeof (error as { meta?: unknown }).meta === "object") &&
+    (typeof (error as { batchRequestIdx?: unknown }).batchRequestIdx ===
+      "undefined" ||
+      typeof (error as { batchRequestIdx?: unknown }).batchRequestIdx ===
+        "number") &&
+    typeof (error as unknown as { [Symbol.toStringTag]: unknown })[
+      Symbol.toStringTag
+    ] === "string"
   );
 };

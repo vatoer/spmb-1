@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Tahapan } from "@/modules/shared/data/tahapan";
 import Link from "next/link";
-import { Tahapan } from "../../../data/tahapan";
 
 interface TahapProps {
   tahap: Tahapan;
