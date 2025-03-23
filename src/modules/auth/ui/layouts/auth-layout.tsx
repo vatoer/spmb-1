@@ -15,11 +15,11 @@ export const AuthLayout = async ({ children }: AuthLayoutProps) => {
         className="flex flex-col items-center justify-start w-full max-w-sm h-min-[600px] border border-gray-200 p-4 md:mt-16 rounded-lg shadow-md"
       >
         <Image
-          src="/globe.svg"
+          src="/logo.png"
           alt="Logo"
           width={72}
           height={72}
-          className="mx-auto rounded-full p-0  shadow-lg md:block m-4"
+          className="mx-auto p-0  md:block m-4"
         />
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </div>

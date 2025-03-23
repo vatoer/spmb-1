@@ -1,3 +1,4 @@
+import { Footer } from "@/components/footer";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/modules/auth/auth";
@@ -42,6 +43,7 @@ export default async function RootLayout({
             {children}
           </SidebarProvider>
         </SessionProvider>
+        <Footer />
         <Toaster richColors />
       </body>
     </html>

@@ -127,7 +127,11 @@ export const RegisterForm = () => {
               )}
             />
             <div className="flex flex-col sm:flex-row  sm:justify-end gap-2 pt-6">
-              <Button className=" w-full py-6" type="submit">
+              <Button
+                className=" w-full py-6 hover:cursor-pointer"
+                type="submit"
+                disabled={isPending}
+              >
                 <span>Buat Akun</span>
                 {isPending && (
                   <Loader className="ml-2 spin-in" size={24} color="white" />

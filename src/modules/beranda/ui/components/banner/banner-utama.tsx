@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import CtaButton from "@/modules/beranda/components/banner/cta-button";
+import CtaButton from "@/modules/beranda/ui/components/banner/cta-button";
 
 interface BannerUtamaProps {
   className?: string;

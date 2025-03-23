@@ -9,9 +9,9 @@ export const DefaultLayout = async ({ children }: DefaultLayoutProps) => {
   return (
     <div className="w-full ">
       <Navbar />
-      <div className="flex min-h-screen pt-[4rem]">
+      <div className="flex min-h-screen pt-[4rem] ">
         <SidebarMobile />
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto mb-[4rem]">{children}</main>
       </div>
     </div>
   );

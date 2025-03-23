@@ -67,7 +67,11 @@ const LoginForm = () => {
             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
           />
           <FormError message={error} />
-          <Button className=" w-full py-6" disabled={isPending} type="submit">
+          <Button
+            className=" w-full py-6 hover:cursor-pointer"
+            disabled={isPending}
+            type="submit"
+          >
             LOGIN
             {isPending && (
               <Loader className="ml-2 spin-in" size={24} color="white" />

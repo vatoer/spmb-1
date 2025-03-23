@@ -28,7 +28,7 @@ export const CardBanner = () => {
 
   return (
     <Card
-      className="w-full md:w-[600px] h-[600px] bg-blue-800 text-white bg-cover"
+      className="w-full md:w-[600px] h-[600px] bg-blue-100 text-white bg-cover"
       style={{
         backgroundImage:
           "linear-gradient(rgba(37, 99, 235, 0.7), rgba(37, 99, 235, 0.7)), url('/hero/hero1.jpg')",
