@@ -28,7 +28,9 @@ export const Tahap = ({ tahap, className, isActive }: TahapProps) => {
         </div>
         {isActive ? (
           <Link href={url} className="mt-auto w-full">
-            <Button className="mt-4 w-full">{title}</Button>
+            <Button className="mt-4 w-full hover:cursor-pointer">
+              {title}
+            </Button>
           </Link>
         ) : (
           <span className="mt-auto w-full">

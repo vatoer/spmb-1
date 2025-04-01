@@ -12,7 +12,7 @@ const DEFAULT_ROUTE_AFTER_LOGIN = "/";
 
 export const login = async (
   data: Login,
-  redirect: boolean = true
+  redirectTo: string = DEFAULT_ROUTE_AFTER_LOGIN
 ): Promise<ActionResponse<boolean | z.ZodError>> => {
   console.log(data);
   const validateFields = LoginSchema.safeParse(data);
@@ -32,10 +32,10 @@ export const login = async (
     await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_ROUTE_AFTER_LOGIN,
-      redirect: redirect,
+      redirectTo: redirectTo,
+      redirect: true,
     });
-    revalidatePath(DEFAULT_ROUTE_AFTER_LOGIN);
+    revalidatePath(redirectTo);
     return { success: true, data: true };
   } catch (error) {
     if (error instanceof AuthError) {

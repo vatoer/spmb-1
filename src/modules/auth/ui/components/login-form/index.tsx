@@ -6,7 +6,7 @@ import { Login, LoginSchema } from "@/zod/schemas/auth/login";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { FormError } from "../form-error";
@@ -17,6 +17,8 @@ const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
 
   const {
     register,
@@ -32,11 +34,9 @@ const LoginForm = () => {
 
   const onSubmit = (data: Login) => {
     startTransition(async () => {
-      login(data, true).then((response) => {
+      login(data, redirect).then((response) => {
         if (response?.success === false) {
           setError(response.error);
-        } else {
-          router.push("/");
         }
       });
     });

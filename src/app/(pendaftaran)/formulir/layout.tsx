@@ -1,11 +1,11 @@
-import DefaultLayout from "@/modules/shared/layouts/default-layout";
+import PendaftaranLayout from "@/modules/pendaftaran/ui/layouts/pendaftaran-layout";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  return <DefaultLayout>{children}</DefaultLayout>;
+  return <PendaftaranLayout>{children}</PendaftaranLayout>;
 };
 
 export default Layout;
