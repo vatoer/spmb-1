@@ -27,13 +27,10 @@ export const register = async (
       };
     }
 
-    const loginResponse = await login(
-      {
-        email: data.email,
-        password: data.password,
-      },
-      false
-    );
+    const loginResponse = await login({
+      email: data.email,
+      password: data.password,
+    });
 
     if (loginResponse?.success === false) {
       return {

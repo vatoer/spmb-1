@@ -18,3 +18,41 @@ model Pendaftaran {
 
   @@map("pendaftaran")
 }
+
+model CalonSiswa {
+  id                        String    @id @default(cuid())
+  nama                      String    @db.VarChar
+  kewarganegaraan           String    @db.VarChar
+  keteranganKewarganegaraan String?   @map("keterangan_kewarganegaraan") @db.VarChar
+  nisn                      String?   @db.VarChar
+  kk                        String?   @db.VarChar
+  nik                       String?   @db.VarChar
+  paspor                    String?   @db.VarChar
+  tempatLahir               String?   @map("tempat_lahir") @db.VarChar
+  tanggalLahir              DateTime  @map("tanggal_lahir") @db.Date
+  jenisKelamin              String    @map("jenis_kelamin") @db.VarChar
+  agama                     String    @db.VarChar
+  golonganDarah             String?   @map("golongan_darah") @db.VarChar
+  jenjangDikdasmen          String    @map("jenjang_dikdasmen") @db.VarChar
+  mapCoordinates            String?   @map("map_coordinates") @db.VarChar
+  statusDomisili            String    @map("status_domisili") @db.VarChar
+  wilayahAdministratifId    String    @map("wilayah_administratif_id") @db.VarChar // tingkat desa/kelurahan
+  alamat                    String    @db.VarChar
+  rt                        String?   @db.VarChar
+  rw                        String?   @db.VarChar
+  createdAt                 DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt                 DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  @@map("calon_siswa")
+}
+
+model WilayahAdministratif {
+  id         String                 @id
+  nama       String                 @db.VarChar
+  indukId    String?                @map("induk_id") @db.VarChar
+  tingkat    Int                    @default(1)
+  induk      WilayahAdministratif?  @relation("IndukRelation", fields: [indukId], references: [id])
+  subWilayah WilayahAdministratif[] @relation("IndukRelation")
+
+  @@map("wilayah_administratif")
+}
