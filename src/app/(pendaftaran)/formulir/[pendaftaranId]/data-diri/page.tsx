@@ -10,7 +10,7 @@ export default async function FormulirDataDiriPage({
   return (
     <div className="w-full flex justify-center items-center p-2 md:p-6">
       <div className="w-full max-w-3xl p-4 shadow-md border border-gray-300 bg-white rounded-lg">
-        <DataDiriForm />
+        <DataDiriForm pendaftaranId={pendaftaranId} />
       </div>
     </div>
   );

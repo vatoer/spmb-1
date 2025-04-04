@@ -14,7 +14,10 @@ interface SelectProps {
   isDisabled?: boolean;
   inputId?: string;
   value?: string | SingleValue<Option>;
-  onChange?: (value: string | SingleValue<Option>) => void;
+  onChange?: (
+    value: string | SingleValue<Option>,
+    { action }: { action?: string }
+  ) => void;
   induk?: string | SingleValue<Option>;
   tingkat: number;
 }

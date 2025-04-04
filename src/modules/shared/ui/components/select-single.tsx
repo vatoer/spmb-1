@@ -10,7 +10,7 @@ interface SelectProps<T = Option> {
   inputId?: string;
   options?: T[];
   value?: string | SingleValue<T>;
-  onChange?: (value: SingleValue<T>) => void;
+  onChange?: (value: SingleValue<T>, { action }: { action?: string }) => void; // https://github.com/JedWatson/react-select/issues/1309
   classNames?: ClassNamesConfig<T, false, GroupBase<T>> | undefined;
 }
 

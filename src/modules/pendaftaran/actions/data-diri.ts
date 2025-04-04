@@ -8,7 +8,8 @@ import { createId } from "@paralleldrive/cuid2";
 import { CalonSiswa } from "@prisma-db-spmb/client";
 
 export async function simpanDataDiri(
-  dataDiri: DataDiri
+  dataDiri: DataDiri,
+  pendaftaranId: string
 ): Promise<ActionResponse<CalonSiswa>> {
   // Implementasi untuk membuat pendaftaran baru
 
@@ -43,7 +44,7 @@ export async function simpanDataDiri(
         jenjangDikdasmen: dataDiri.jenjangDikdasmen,
         mapCoordinates: dataDiri.mapCoordinates,
         statusDomisili: dataDiri.statusDomisili,
-        wilayahAdministratifId: dataDiri.wilayah,
+        wilayahAdministratifId: dataDiri.wilayahAdministratifId,
         alamat: dataDiri.alamat,
         rt: dataDiri.rt,
         rw: dataDiri.rw,
@@ -64,10 +65,24 @@ export async function simpanDataDiri(
         jenjangDikdasmen: dataDiri.jenjangDikdasmen,
         mapCoordinates: dataDiri.mapCoordinates,
         statusDomisili: dataDiri.statusDomisili,
-        wilayahAdministratifId: dataDiri.wilayah,
+        wilayahAdministratifId: dataDiri.wilayahAdministratifId,
         alamat: dataDiri.alamat,
         rt: dataDiri.rt,
         rw: dataDiri.rw,
+      },
+    });
+
+    // Update pendaftaran with calonSiswaId
+    await dbSpmb.pendaftaran.update({
+      where: {
+        id: pendaftaranId,
+      },
+      data: {
+        calonSiswa: {
+          connect: {
+            id: newCalonSiswa.id,
+          },
+        },
       },
     });
 

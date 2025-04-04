@@ -29,8 +29,8 @@ import {
   Kewarganegaraan,
 } from "@/zod/schemas/shared";
 import { DataDiri, dataDiriSchema } from "@/zod/schemas/siswa/siswa";
-import { ChevronDown } from "lucide-react";
-import { useEffect } from "react";
+import { ChevronDown, Loader } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -45,10 +45,6 @@ const SelectWilayah = dynamic(
     ),
   }
 );
-
-interface DataDiriFormProps {
-  nextStep?: () => void;
-}
 
 let defaultValuesDataDiri = {
   nama: "",
@@ -69,33 +65,36 @@ let defaultValuesDataDiri = {
   kotaKabupaten: "-",
   kecamatan: "-",
   desaKelurahan: "-",
-  wilayah: "",
+  wilayahAdministratifId: "",
   // statusDomisili: "LAINNYA",
 };
-
-// get dataDiri from local storage
-const dataDiri = localStorage.getItem("dataDiri");
-const parsedDataDiri = dataDiri ? JSON.parse(dataDiri) : null;
-// set default values from local storage
-if (parsedDataDiri) {
-  defaultValuesDataDiri = parsedDataDiri;
-}
 
 const checkParentPrefix = (parent: string, child: string) => {
   if (parent === "-" || parent === "") return false;
   return child.startsWith(parent);
 };
 
-export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
+interface DataDiriFormProps {
+  pendaftaranId: string;
+  nextStep?: () => void;
+}
+
+export const DataDiriForm = ({
+  pendaftaranId,
+  nextStep = () => {},
+}: DataDiriFormProps) => {
+  const [defaultValues, setDefaultValues] = useState(defaultValuesDataDiri);
+
   const form = useForm<DataDiri>({
     mode: "onBlur",
     resolver: zodResolver(dataDiriSchema),
-    defaultValues: defaultValuesDataDiri,
+    defaultValues: defaultValues,
   });
 
-  const { handleSubmit, watch, setValue, trigger } = form;
+  const { handleSubmit, watch, setValue, trigger, formState, reset } = form;
+  const { isSubmitting } = formState;
 
-  const wilayah = watch("wilayah");
+  const wilayah = watch("wilayahAdministratifId");
   const provinsi = watch("provinsi");
   const kotaKabupaten = watch("kotaKabupaten");
   const kecamatan = watch("kecamatan");
@@ -103,10 +102,102 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
   const nik = watch("nik");
   // const tanggalLahir = watch("tanggalLahir");
 
+  const [initWilayahAdministratifId, setInitWilayahAdministratifId] =
+    useState("");
+
+  const setWilayah = (value: string) => {
+    const provinsi = value.slice(0, 2);
+    const kotaKabupaten = value.slice(0, 4);
+    const kecamatan = value.slice(0, 6);
+    // const desaKelurahan = value.slice(0, 10);
+
+    console.log("wilayah", provinsi, kotaKabupaten, kecamatan, value);
+
+    setValue("provinsi", provinsi);
+    setValue("kotaKabupaten", kotaKabupaten);
+    setValue("kecamatan", kecamatan);
+    setValue("desaKelurahan", value);
+  };
+
+  const [initProvinsi, setInitProvinsi] = useState<string>("-");
+  const [initKotaKabupaten, setInitKotaKabupaten] = useState("-");
+  const [initKecamatan, setInitKecamatan] = useState("-");
+  const [initDesaKelurahan, setInitDesaKelurahan] = useState("-");
+
+  const setInitWilayah = (value: string) => {
+    const provinsi = value.slice(0, 2);
+    const kotaKabupaten = value.slice(0, 4);
+    const kecamatan = value.slice(0, 6);
+    const desaKelurahan = value;
+    setInitProvinsi(provinsi);
+    setInitKotaKabupaten(kotaKabupaten);
+    setInitKecamatan(kecamatan);
+    setInitDesaKelurahan(desaKelurahan);
+  };
+
+  const clearInitDesaKelurahan = () => {
+    setInitDesaKelurahan("-");
+    setValue("wilayahAdministratifId", "-");
+    setValue("desaKelurahan", "-");
+  };
+
+  const clearInitKecamatan = () => {
+    clearInitDesaKelurahan();
+    setInitKecamatan("-");
+    setValue("kecamatan", "-");
+  };
+
+  const clearInitKotaKabupaten = () => {
+    clearInitKecamatan();
+    setInitKotaKabupaten("-");
+    setValue("kotaKabupaten", "-");
+  };
+
+  const clearInitProvinsi = () => {
+    clearInitKotaKabupaten();
+    setInitProvinsi("-");
+    setValue("provinsi", "-");
+  };
+
+  const checkChainWilayah = () => {
+    if (!checkParentPrefix(provinsi, kotaKabupaten)) {
+      toast.error("Provinsi dan Kota/Kabupaten tidak sesuai");
+      return false;
+    }
+    if (!checkParentPrefix(kotaKabupaten, kecamatan)) {
+      toast.error("Kota/Kabupaten dan Kecamatan tidak sesuai");
+      return false;
+    }
+    if (!checkParentPrefix(kecamatan, desaKelurahan)) {
+      toast.error("Kecamatan dan Desa/Kelurahan tidak sesuai");
+      return false;
+    }
+    return true;
+  };
+
+  // Fetch default values from localStorage and reset the form
+  useEffect(() => {
+    const dataDiri = localStorage.getItem("dataDiri");
+    if (dataDiri) {
+      const parsedData = JSON.parse(dataDiri);
+      setDefaultValues(parsedData); // Update the state
+      reset(parsedData); // Reset the form with the new default values
+      setInitWilayah(parsedData.wilayahAdministratifId);
+      setWilayah(parsedData.wilayahAdministratifId);
+      // setValue("provinsi", parsedData.wilayahAdministratifId.slice(0, 2));
+    } else {
+      reset(defaultValuesDataDiri); // Reset with initial defaults if no localStorage data
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onSubmit = async (data: DataDiri) => {
     console.log(data);
+    if (!checkChainWilayah()) {
+      return;
+    }
 
-    const response = await simpanDataDiri(data);
+    const response = await simpanDataDiri(data, pendaftaranId);
     if (response?.success === false) {
       toast.error("Gagal menyimpan data diri.");
       console.error(response?.error);
@@ -116,7 +207,7 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
       toast.success("Data diri berhasil disimpan.");
     }
     // Simpan data diri ke local storage
-    localStorage.setItem("dataDiri", JSON.stringify(data));
+    localStorage.setItem("dataDiri", JSON.stringify(response.data));
 
     //updateFormData(data);
     // toast({
@@ -135,8 +226,15 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
     // on initial load if kotaKabupaten is set and the prefix is same as provinsi then set it from local storage
     if (checkParentPrefix(provinsi, kotaKabupaten)) {
       setValue("kotaKabupaten", kotaKabupaten);
+      if (provinsi === initProvinsi) {
+        setInitProvinsi("-");
+      }
     } else {
-      setValue("kotaKabupaten", "-");
+      if (initProvinsi === "-") {
+        setValue("kotaKabupaten", "-");
+      } else {
+        setValue("kotaKabupaten", initKotaKabupaten);
+      }
     }
     console.log(provinsi);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,8 +243,15 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
   useEffect(() => {
     if (checkParentPrefix(kotaKabupaten, kecamatan)) {
       setValue("kecamatan", kecamatan);
+      if (kotaKabupaten === initKotaKabupaten) {
+        setInitKotaKabupaten("-");
+      }
     } else {
-      setValue("kecamatan", "-");
+      if (initKotaKabupaten === "-") {
+        setValue("kecamatan", "-");
+      } else {
+        setValue("kecamatan", initKecamatan);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kotaKabupaten, setValue]);
@@ -154,14 +259,21 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
   useEffect(() => {
     if (checkParentPrefix(kecamatan, desaKelurahan)) {
       setValue("desaKelurahan", desaKelurahan);
+      if (kecamatan === initKecamatan) {
+        setInitKecamatan("-");
+      }
     } else {
-      setValue("desaKelurahan", "-");
+      if (initKecamatan === "-") {
+        setValue("desaKelurahan", "-");
+      } else {
+        setValue("desaKelurahan", initDesaKelurahan);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kecamatan, setValue]);
 
   useEffect(() => {
-    setValue("wilayah", desaKelurahan);
+    setValue("wilayahAdministratifId", desaKelurahan);
   }, [desaKelurahan, setValue]);
 
   useEffect(() => {
@@ -435,7 +547,7 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                       tingkat={1}
                       inputId="select-provinsi"
                       value={field.value}
-                      onChange={(selected) => {
+                      onChange={(selected, { action }) => {
                         let value = "";
                         if (typeof selected === "object" && selected) {
                           value = selected.value;
@@ -443,6 +555,10 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                           value = selected ?? "";
                         }
                         field.onChange(value);
+                        if (action === "clear") {
+                          clearInitProvinsi();
+                          console.log("provinsi clear", value);
+                        }
                       }}
                     />
                   </FormControl>
@@ -468,7 +584,7 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                       inputId="select-kota-kabupaten"
                       value={field.value}
                       induk={provinsi}
-                      onChange={(selected) => {
+                      onChange={(selected, { action }) => {
                         let value = "";
                         if (typeof selected === "object" && selected) {
                           value = selected.value;
@@ -476,6 +592,10 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                           value = selected ?? "";
                         }
                         field.onChange(value);
+                        if (action === "clear") {
+                          clearInitKotaKabupaten();
+                          console.log("kotaKabupaten clear", value);
+                        }
                       }}
                     />
                   </FormControl>
@@ -502,7 +622,7 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                       tingkat={3}
                       value={field.value}
                       induk={kotaKabupaten}
-                      onChange={(selected) => {
+                      onChange={(selected, { action }) => {
                         let value = "";
                         if (typeof selected === "object" && selected) {
                           value = selected.value;
@@ -510,6 +630,10 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                           value = selected ?? "";
                         }
                         field.onChange(value);
+                        if (action === "clear") {
+                          clearInitKecamatan();
+                          console.log("kecamatan clear", value);
+                        }
                       }}
                     />
                   </FormControl>
@@ -535,7 +659,7 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                       tingkat={4}
                       value={field.value}
                       induk={kecamatan}
-                      onChange={(selected) => {
+                      onChange={(selected, { action }) => {
                         let value = "";
                         if (typeof selected === "object" && selected) {
                           value = selected.value;
@@ -543,6 +667,10 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
                           value = selected ?? "";
                         }
                         field.onChange(value);
+                        if (action === "clear") {
+                          clearInitDesaKelurahan();
+                          console.log("desaKelurahan clear", value);
+                        }
                       }}
                     />
                   </FormControl>
@@ -612,11 +740,17 @@ export const DataDiriForm = ({ nextStep = () => {} }: DataDiriFormProps) => {
 
           <div
             className={cn(
-              "flex flex-col sm:flex-row  justify-center sm:justify-end gap-2 mt-6 "
+              "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
             )}
           >
-            <Button type="submit" size={"lg"} className="hover:cursor-pointer">
-              Simpan
+            <Button
+              type="submit"
+              size={"lg"}
+              className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
+              disabled={isSubmitting}
+            >
+              <span className="text-sm font-semibold">Simpan Data Diri</span>
+              {isSubmitting && <Loader className="animate-spin mr-2 h-4 w-4" />}
             </Button>
           </div>
         </form>

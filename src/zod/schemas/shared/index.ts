@@ -120,7 +120,7 @@ export const StatusDomisiliEnum = z.enum([
 export const domisiliSchema = z.object({
   statusDomisili: StatusDomisiliEnum,
   alamat: z.string().min(3).max(255),
-  wilayah: z.string().min(2).max(10),
+  wilayahAdministratifId: z.string().min(2).max(10),
   provinsi: z.string().min(2).max(2),
   kotaKabupaten: z.string().min(4).max(4),
   kecamatan: z.string().min(6).max(6),

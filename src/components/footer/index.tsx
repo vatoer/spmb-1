@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <footer>
+    <footer className="bg-zinc-100">
       <div className="w-full md:h-[calc(33vh-4rem)] py-8 px-8 md:px-8 flex flex-col md:flex-row items-start md:justify-between gap-4">
         <div className="flex flex-col  gap-2 md:items-start">
           <h1 className="text-xl font-bold z-20">Siap SPMB</h1>
@@ -69,8 +69,8 @@ export const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="w-full py-8 px-8 md:px-8 bg-zinc-100  flex flex-col items-center justify-center">
-        <p className="text-center text-sm font-semibold z-20">
+      <div className="w-full py-8 px-8 md:px-8 bg-zinc-800  flex flex-col items-center justify-center">
+        <p className="text-center text-sm font-semibold z-20 text-zinc-100">
           &copy; 2025 Siap SPMB. All Rights Reserved.
         </p>
       </div>

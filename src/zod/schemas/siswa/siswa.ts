@@ -38,13 +38,44 @@ export const baseSchema = z.object({
   jenjangDikdasmen: jenjangDikdasmenSchema,
 });
 
+const checkParentPrefix = (parent: string, child: string) => {
+  if (parent === "-" || parent === "") return false;
+  return child.startsWith(parent);
+};
 // Merging the schemas
-export const dataDiriSchema = baseSchema.merge(domisiliSchema).extend({
-  nik: baseSchema.shape.nik.refine(
-    (val) => parseNomorInduk(val) !== null, // ✅ Implicit return
-    { message: "NIK tidak valid" }
-  ),
-});
+export const dataDiriSchema = baseSchema
+  .merge(domisiliSchema)
+  .extend({
+    nik: baseSchema.shape.nik.refine(
+      (val) => parseNomorInduk(val) !== null, // ✅ Implicit return
+      { message: "NIK tidak valid" }
+    ),
+  })
+  .superRefine((data, ctx) => {
+    if (!checkParentPrefix(data.provinsi, data.kotaKabupaten)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["kotaKabupaten"],
+        message: "Provinsi dan Kota/Kabupaten tidak sesuai",
+      });
+    }
+
+    if (!checkParentPrefix(data.kotaKabupaten, data.kecamatan)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["kecamatan"],
+        message: "Kota/Kabupaten dan Kecamatan tidak sesuai",
+      });
+    }
+
+    if (!checkParentPrefix(data.kecamatan, data.desaKelurahan)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["desaKelurahan"],
+        message: "Kecamatan dan Desa/Kelurahan tidak sesuai",
+      });
+    }
+  });
 
 // export const dataDiriSchema = baseSchema
 //   .merge(domisiliSchema)
