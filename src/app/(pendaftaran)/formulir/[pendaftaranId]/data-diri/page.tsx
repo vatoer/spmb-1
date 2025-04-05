@@ -1,4 +1,8 @@
+import { getPendaftaran } from "@/data/pendaftaran/pendaftaran";
+import { auth } from "@/modules/auth/auth";
+import BreadcrumbMobile from "@/modules/pendaftaran/ui/components/formulir/breadcrumb/breadcrumb-mobile";
 import DataDiriForm from "@/modules/pendaftaran/ui/components/formulir/data-diri";
+import { redirect } from "next/navigation";
 
 export default async function FormulirDataDiriPage({
   params,
@@ -7,11 +11,22 @@ export default async function FormulirDataDiriPage({
 }) {
   // Mengambil ID pendaftaran dari parameter
   const { pendaftaranId } = await params;
+
+  const session = await auth();
+  if (!session) {
+    redirect("/login?redirect=/formulir");
+  }
+
+  const pendaftaran = await getPendaftaran(session.user?.id, pendaftaranId);
+  // Jika pendaftaran tidak ditemukan, redirect ke halaman formulir
+  if (!pendaftaran.length) {
+    redirect("/formulir");
+  }
+
   return (
-    <div className="w-full flex justify-center items-center p-2 md:p-6">
-      <div className="w-full max-w-3xl p-4 shadow-md border border-gray-300 bg-white rounded-lg">
-        <DataDiriForm pendaftaranId={pendaftaranId} />
-      </div>
+    <div className="w-full flex flex-col justify-start items-start p-2 md:p-6">
+      <BreadcrumbMobile pendaftaranId={pendaftaranId} title="Data Diri" />
+      <DataDiriForm pendaftaranId={pendaftaranId} />
     </div>
   );
 }

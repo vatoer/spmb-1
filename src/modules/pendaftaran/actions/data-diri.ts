@@ -88,7 +88,7 @@ export async function simpanDataDiri(
 
     return {
       success: true,
-      message: "Pendaftaran berhasil dibuat",
+      message: "Data diri berhasil disimpan",
       data: newCalonSiswa,
     };
   } catch (error) {

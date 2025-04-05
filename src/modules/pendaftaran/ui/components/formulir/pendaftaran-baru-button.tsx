@@ -14,11 +14,11 @@ const PendaftaranBaruButton = () => {
     setSubmitting(true);
     const response = await buatPendaftaran();
     if (response.success) {
-      toast.success("Pendaftaran baru berhasil dibuat.");
+      toast.success("memulai pendaftaran baru");
       router.push(`/formulir/${response.data.id}/data-diri`);
     } else {
       toast.error(
-        response.error || "Terjadi kesalahan saat membuat pendaftaran baru."
+        response.error || "Terjadi kesalahan memuat pendaftaran baru."
       );
     }
     setSubmitting(false);
