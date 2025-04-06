@@ -55,8 +55,8 @@ export async function simpanDataOrangTua(
 
     // start transaction
 
-    const trans = await dbSpmb.$transaction(async (prisma) => {
-      const insertOrangTua = async (ortu: Ortu, role: "ayah" | "ibu") => {
+    await dbSpmb.$transaction(async (prisma) => {
+      const insertOrangTua = async (ortu: Ortu) => {
         return await prisma.orangTua.upsert({
           where: {
             id: ortu.id || createId(),
@@ -86,8 +86,8 @@ export async function simpanDataOrangTua(
         });
       };
 
-      const insertedAyah = await insertOrangTua(ayah, "ayah");
-      const insertedIbu = await insertOrangTua(ibu, "ibu");
+      const insertedAyah = await insertOrangTua(ayah);
+      const insertedIbu = await insertOrangTua(ibu);
 
       const updateCalonMurid = await prisma.calonMurid.update({
         where: {

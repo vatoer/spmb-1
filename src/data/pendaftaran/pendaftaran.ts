@@ -61,7 +61,7 @@ export function isPendaftaranWithCalonMurid(
 export const mapDbToZodDataDiri = (
   calonMurid?: CalonMurid | null
 ): DataDiri => {
-  let dataDiri: DataDiri = {
+  const dataDiri: DataDiri = {
     id: calonMurid?.id,
     nama: calonMurid?.nama || "",
     kk: calonMurid?.kk || "",
