@@ -25,6 +25,7 @@ export async function simpanDataOrangTua(
       data: orangTua,
     };
   } catch (error) {
+    console.error("Error saving data orang tua:", error);
     return {
       error: "unknown",
       success: false,

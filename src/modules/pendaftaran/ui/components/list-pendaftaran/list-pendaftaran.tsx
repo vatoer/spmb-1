@@ -11,10 +11,6 @@ interface ListPendaftaranProps {
 const ListPendaftaran = ({ pendaftaranList = [] }: ListPendaftaranProps) => {
   const router = useRouter();
 
-  if (pendaftaranList.length === 0) {
-    return <TidakAdaPendaftaran />;
-  }
-
   const handleRowClick = (pendaftaranId: string) => {
     router.push(`/formulir/${pendaftaranId}`);
   };
@@ -55,7 +51,7 @@ const ListPendaftaran = ({ pendaftaranList = [] }: ListPendaftaranProps) => {
   );
 };
 
-const TidakAdaPendaftaran = () => {
+export const TidakAdaPendaftaran = () => {
   return (
     <>
       <div>

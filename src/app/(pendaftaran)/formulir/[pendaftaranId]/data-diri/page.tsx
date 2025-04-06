@@ -19,7 +19,7 @@ export default async function FormulirDataDiriPage({
 
   const pendaftaran = await getPendaftaran(session.user?.id, pendaftaranId);
   // Jika pendaftaran tidak ditemukan, redirect ke halaman formulir
-  if (!pendaftaran.length) {
+  if (!pendaftaran) {
     redirect("/formulir");
   }
 

@@ -22,13 +22,13 @@ import { simpanDataDiri } from "@/modules/pendaftaran/actions/data-diri";
 import { Select } from "@/modules/pendaftaran/ui/components/formulir/select";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import { isValidDateString, parseNIK } from "@/utils/kependudukan";
+import { DataDiri, dataDiriSchema } from "@/zod/schemas/murid/murid";
 import {
   Agama,
   GolonganDarah,
   JenisKelamin,
   Kewarganegaraan,
 } from "@/zod/schemas/shared";
-import { DataDiri, dataDiriSchema } from "@/zod/schemas/siswa/siswa";
 import { ChevronDown, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";

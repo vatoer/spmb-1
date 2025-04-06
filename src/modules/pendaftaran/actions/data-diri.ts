@@ -3,14 +3,14 @@ import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
 import { dbSpmb } from "@/lib/db-spmb";
 import { auth } from "@/modules/auth/auth";
 import { ActionResponse } from "@/types/response";
-import { DataDiri } from "@/zod/schemas/siswa/siswa";
+import { DataDiri } from "@/zod/schemas/murid/murid";
 import { createId } from "@paralleldrive/cuid2";
-import { CalonSiswa } from "@prisma-db-spmb/client";
+import { CalonMurid } from "@prisma-db-spmb/client";
 
 export async function simpanDataDiri(
   dataDiri: DataDiri,
   pendaftaranId: string
-): Promise<ActionResponse<CalonSiswa>> {
+): Promise<ActionResponse<CalonMurid>> {
   // Implementasi untuk membuat pendaftaran baru
 
   const session = await auth();
@@ -24,9 +24,10 @@ export async function simpanDataDiri(
   }
 
   try {
-    const newCalonSiswa = await dbSpmb.calonSiswa.upsert({
+    const newCalonMurid = await dbSpmb.calonMurid.upsert({
       where: {
         id: dataDiri.id || createId(),
+        userId: user.id,
       },
       create: {
         nama: dataDiri.nama,
@@ -48,6 +49,7 @@ export async function simpanDataDiri(
         alamat: dataDiri.alamat,
         rt: dataDiri.rt,
         rw: dataDiri.rw,
+        userId: user.id,
       },
       update: {
         nama: dataDiri.nama,
@@ -72,15 +74,15 @@ export async function simpanDataDiri(
       },
     });
 
-    // Update pendaftaran with calonSiswaId
+    // Update pendaftaran with calonMuridId
     await dbSpmb.pendaftaran.update({
       where: {
         id: pendaftaranId,
       },
       data: {
-        calonSiswa: {
+        calonMurid: {
           connect: {
-            id: newCalonSiswa.id,
+            id: newCalonMurid.id,
           },
         },
       },
@@ -89,7 +91,7 @@ export async function simpanDataDiri(
     return {
       success: true,
       message: "Data diri berhasil disimpan",
-      data: newCalonSiswa,
+      data: newCalonMurid,
     };
   } catch (error) {
     return getPrismaErrorResponse(error);

@@ -16,26 +16,13 @@ model Pendaftaran {
   updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
   status    String?   @db.VarChar
 
-  calonSiswaId String?     @map("calon_siswa_id") @db.VarChar
-  calonSiswa   CalonSiswa? @relation(fields: [calonSiswaId], references: [id])
+  calonMuridId String?     @map("calon_murid_id") @db.VarChar
+  calonMurid   CalonMurid? @relation(fields: [calonMuridId], references: [id])
 
   @@map("pendaftaran")
 }
 
-model Profile {
-  id        String    @id @default(cuid())
-  userId    String    @map("user_id") @db.VarChar
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
-  status    String?   @db.VarChar
-
-  calonSiswa CalonSiswa[]
-  orangTua   OrangTua[]
-
-  @@map("profile")
-}
-
-model CalonSiswa {
+model CalonMurid {
   id                        String        @id @default(cuid())
   nama                      String        @db.VarChar
   kewarganegaraan           String        @db.VarChar
@@ -63,10 +50,9 @@ model CalonSiswa {
   createdAt                 DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt                 DateTime?     @default(now()) @map("updated_at") @db.Timestamp(6)
   pendaftaran               Pendaftaran[]
-  user                      Profile?      @relation(fields: [profileId], references: [id])
-  profileId                 String?
+  userId                    String        @map("user_id") @db.VarChar
 
-  @@map("calon_siswa")
+  @@map("calon_murid")
 }
 
 model WilayahAdministratif {
@@ -115,10 +101,9 @@ model OrangTua {
   pekerjaan         Pekerjaan?         @relation(fields: [pekerjaanId], references: [id])
   pendapatanId      String?            @map("pendapatan_id") @db.VarChar
   pendapatan        RentangPendapatan? @relation(fields: [pendapatanId], references: [id])
-  anakIbu           CalonSiswa[]       @relation("IbuRelation")
-  anakAyah          CalonSiswa[]       @relation("AyahRelation")
-  user              Profile?           @relation(fields: [profileId], references: [id])
-  profileId         String?
+  anakIbu           CalonMurid[]       @relation("IbuRelation")
+  anakAyah          CalonMurid[]       @relation("AyahRelation")
+  userId            String             @map("user_id") @db.VarChar
 
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)

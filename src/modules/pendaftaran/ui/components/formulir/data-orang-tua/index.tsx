@@ -15,10 +15,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 // import { useWizardForm } from "@/modules/pendaftaran/hooks/use-wizard-form";
 import {
-  getOptionsPekerjaan,
-  PekerjaanOption,
-} from "@/actions/common/pekerjaan";
-import {
   getOptionsRentangPendapatan,
   RentangPendapatanOption,
 } from "@/actions/common/rentang-pendapatan";
@@ -105,25 +101,18 @@ export const DataOrangTuaForm = ({
   useEffect(() => {
     form.reset(defaultValuesDataOrangTua);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
-
-  const [pekerjaanOptions, setPekerjaanOptions] = useState<PekerjaanOption[]>(
-    []
-  );
+  }, []);
 
   const [rentangPendapatanOptions, setRentangPendapatanOptions] = useState<
     RentangPendapatanOption[]
   >([]);
   // get optiosn pekerjaan
   useEffect(() => {
-    const fetchPekerjaan = async () => {
-      const pekerjaan = await getOptionsPekerjaan();
-      setPekerjaanOptions(pekerjaan);
+    const fetchOptions = async () => {
       const rentangPendapatan = await getOptionsRentangPendapatan();
       setRentangPendapatanOptions(rentangPendapatan);
     };
-    fetchPekerjaan();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchOptions();
   }, []);
 
   return (

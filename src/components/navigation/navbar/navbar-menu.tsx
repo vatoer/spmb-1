@@ -55,14 +55,14 @@ export function NavbarMenu() {
                 </NavigationMenuLink>
               </li>
               <ListItem href="/panduan/pendaftaran" title="Pendaftaran">
-                Mendaftar sebagai calon siswa baru.
+                Mendaftar sebagai calon murid baru.
               </ListItem>
               <ListItem href="/panduan/seleksi" title="Seleksi">
-                Proses seleksi calon siswa baru sesuai syarat dan ketentuan
+                Proses seleksi calon murid baru sesuai syarat dan ketentuan
                 sekolah.
               </ListItem>
               <ListItem href="/panduan/lapor-diri" title="Lapor Diri">
-                Proses lapor diri bagi calon siswa yang diterima.
+                Proses lapor diri bagi calon murid yang diterima.
               </ListItem>
             </ul>
           </NavigationMenuContent>

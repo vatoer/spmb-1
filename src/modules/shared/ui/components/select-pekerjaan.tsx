@@ -31,7 +31,6 @@ export const SelectPekerjaan = ({ ...props }: SelectProps) => {
       setOptions(response);
     };
     fetchOptions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
