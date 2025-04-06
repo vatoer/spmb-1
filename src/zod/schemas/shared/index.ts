@@ -49,40 +49,6 @@ export const jenjangPendidikanSchema = z.nativeEnum(JenjangPendidikan, {
   errorMap: () => ({ message: "Pilih pendidikan" }),
 });
 
-export enum Pekerjaan {
-  "Petani" = "Petani",
-  "Pedagang" = "Pedagang",
-  "Sopir" = "Sopir",
-  "Nelayan" = "Nelayan",
-  "Buruh" = "Buruh",
-  "Wiraswasta" = "Wiraswasta",
-  "Wirausaha" = "Wirausaha",
-  "PegawaiSwasta" = "Pegawai Swasta",
-  "PegawaiBUMN" = "Pegawai BUMN",
-  "PNS" = "PNS",
-  "TNI" = "TNI",
-  "POLRI" = "POLRI",
-  "IbuRumahTangga" = "Ibu Rumah Tangga",
-  "PelajarMahasiswa" = "Pelajar/Mahasiswa",
-  "Pensiunan" = "Pensiunan",
-  "TidakBekerja" = "Tidak Bekerja",
-  "Lainnya" = "Lain-lain",
-}
-
-export enum RentangPendapatan {
-  "TidakBerpendapatan" = "Tidak berpendapatan",
-  "KurangDari1Juta" = "Kurang dari 1 juta",
-  "1JutaSampai2Juta" = "1 juta sampai 2 juta",
-  "2JutaSampai3Juta" = "2 juta sampai 3 juta",
-  "3JutaSampai5Juta" = "3 juta sampai 5 juta",
-  "5JutaSampai10Juta" = "5 juta sampai 10 juta",
-  "LebihDari10Juta" = "Lebih dari 10 juta",
-}
-
-export const pekerjaanSchema = z.nativeEnum(Pekerjaan, {
-  errorMap: () => ({ message: "Pilih Pekerjaan" }),
-});
-
 export enum Agama {
   Islam = "Islam",
   Protestan = "Protestan",

@@ -30,6 +30,7 @@ model Profile {
   status    String?   @db.VarChar
 
   calonSiswa CalonSiswa[]
+  orangTua   OrangTua[]
 
   @@map("profile")
 }
@@ -55,6 +56,10 @@ model CalonSiswa {
   alamat                    String        @db.VarChar
   rt                        String?       @db.VarChar
   rw                        String?       @db.VarChar
+  ibuId                     String?       @map("ibu_id") @db.VarChar
+  ibu                       OrangTua?     @relation("IbuRelation", fields: [ibuId], references: [id])
+  ayahId                    String?       @map("ayah_id") @db.VarChar
+  ayah                      OrangTua?     @relation("AyahRelation", fields: [ayahId], references: [id])
   createdAt                 DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt                 DateTime?     @default(now()) @map("updated_at") @db.Timestamp(6)
   pendaftaran               Pendaftaran[]
@@ -73,4 +78,50 @@ model WilayahAdministratif {
   subWilayah WilayahAdministratif[] @relation("IndukRelation")
 
   @@map("wilayah_administratif")
+}
+
+model Pekerjaan {
+  id           String      @id
+  nama         String      @db.VarChar
+  indukId      String?     @map("induk_id") @db.VarChar
+  induk        Pekerjaan?  @relation("IndukRelation", fields: [indukId], references: [id])
+  subPekerjaan Pekerjaan[] @relation("IndukRelation")
+  OrangTua     OrangTua[]
+
+  @@map("pekerjaan")
+}
+
+model RentangPendapatan {
+  id           String     @id
+  nama         String     @db.VarChar
+  rentangBawah Int        @map("rentang_bawah")
+  rentangAtas  Int        @map("rentang_atas")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime?  @default(now()) @map("updated_at") @db.Timestamp(6)
+  OrangTua     OrangTua[]
+
+  @@map("rentang_penghasilan")
+}
+
+model OrangTua {
+  id                String             @id @default(cuid())
+  nama              String             @db.VarChar
+  nik               String?            @db.VarChar
+  kk                String?            @db.VarChar
+  jenisKelamin      String             @map("jenis_kelamin") @db.VarChar
+  tahunWafat        Int?               @map("tahun_wafat")
+  jenjangPendidikan String             @map("jenjang_pendidikan") @db.VarChar
+  pekerjaanId       String?            @map("pekerjaan_id") @db.VarChar
+  pekerjaan         Pekerjaan?         @relation(fields: [pekerjaanId], references: [id])
+  pendapatanId      String?            @map("pendapatan_id") @db.VarChar
+  pendapatan        RentangPendapatan? @relation(fields: [pendapatanId], references: [id])
+  anakIbu           CalonSiswa[]       @relation("IbuRelation")
+  anakAyah          CalonSiswa[]       @relation("AyahRelation")
+  user              Profile?           @relation(fields: [profileId], references: [id])
+  profileId         String?
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  @@map("orang_tua")
 }

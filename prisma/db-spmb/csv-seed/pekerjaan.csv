@@ -1,0 +1,32 @@
+id;nama
+1;Petani
+2;Peternak
+3;Nelayan
+4;Pedagang
+5;Pekerja Pabrik
+6;Pekerja Bangunan
+7;Pekerja Kebun
+8;Pekerja Rumah Tangga
+9;Pekerja Lepas
+10;Tukang Ojek
+11;PNS
+12;TNI
+13;Polri
+14;Karyawan BUMN
+15;Karyawan Swasta
+16;Wirausaha
+17;Guru Honorer
+18;Dosen
+19;Tenaga Medis
+20;Tenaga Pendidik
+21;Dokter
+22;Seniman
+23;Musisi
+24;"Artis/Selebriti/Selebgram"
+25;Youtuber
+26;Influencer
+27;Mahasiswa
+28;Pelajar
+29;Ibu Rumah Tangga
+30;Pekerja Sosial
+99;Lainnya
