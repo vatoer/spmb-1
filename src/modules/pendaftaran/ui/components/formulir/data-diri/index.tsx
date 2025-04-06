@@ -23,12 +23,6 @@ import { Select } from "@/modules/pendaftaran/ui/components/formulir/select";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import { isValidDateString, parseNIK } from "@/utils/kependudukan";
 import { DataDiri, dataDiriSchema } from "@/zod/schemas/murid/murid";
-import {
-  Agama,
-  GolonganDarah,
-  JenisKelamin,
-  Kewarganegaraan,
-} from "@/zod/schemas/shared";
 import { ChevronDown, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -46,29 +40,6 @@ const SelectWilayah = dynamic(
   }
 );
 
-const defaultValuesDataDiri = {
-  nama: "",
-  kewarganegaraan: Kewarganegaraan.WNI,
-  tempatLahir: "",
-  tanggalLahir: new Date(),
-  agama: Agama.Lainnya,
-  golonganDarah: GolonganDarah.TIDAK_TAHU,
-  jenisKelamin: JenisKelamin.LakiLaki,
-  nisn: "",
-  kk: "",
-  nik: "",
-  // jenjangDikdasmen: JenjangDikdasmen.SD,
-  alamat: "",
-  rt: "",
-  rw: "",
-  provinsi: "-",
-  kotaKabupaten: "-",
-  kecamatan: "-",
-  desaKelurahan: "-",
-  wilayahAdministratifId: "",
-  // statusDomisili: "LAINNYA",
-};
-
 const checkParentPrefix = (parent: string, child: string) => {
   if (parent === "-" || parent === "") return false;
   return child.startsWith(parent);
@@ -77,11 +48,13 @@ const checkParentPrefix = (parent: string, child: string) => {
 interface DataDiriFormProps {
   pendaftaranId: string;
   nextStep?: () => void;
+  defaultValuesDataDiri?: DataDiri;
 }
 
 export const DataDiriForm = ({
   pendaftaranId,
   nextStep = () => {},
+  defaultValuesDataDiri,
 }: DataDiriFormProps) => {
   const [defaultValues, setDefaultValues] = useState(defaultValuesDataDiri);
 
@@ -172,9 +145,9 @@ export const DataDiriForm = ({
     return true;
   };
 
-  // Fetch default values from localStorage and reset the form
+  // Fetch default values from sessionStorage and reset the form
   useEffect(() => {
-    const dataDiri = localStorage.getItem("dataDiri");
+    const dataDiri = sessionStorage.getItem("dataDiri");
     if (dataDiri) {
       const parsedData = JSON.parse(dataDiri);
       setDefaultValues(parsedData); // Update the state
@@ -183,7 +156,7 @@ export const DataDiriForm = ({
       setWilayah(parsedData.wilayahAdministratifId);
       // setValue("provinsi", parsedData.wilayahAdministratifId.slice(0, 2));
     } else {
-      reset(defaultValuesDataDiri); // Reset with initial defaults if no localStorage data
+      reset(defaultValuesDataDiri); // Reset with initial defaults if no sessionStorage data
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -204,7 +177,7 @@ export const DataDiriForm = ({
       toast.success("Data diri berhasil disimpan.");
     }
     // Simpan data diri ke local storage
-    localStorage.setItem("dataDiri", JSON.stringify(response.data));
+    sessionStorage.setItem("dataDiri", JSON.stringify(response.data));
 
     //updateFormData(data);
     // toast({

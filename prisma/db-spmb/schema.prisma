@@ -44,9 +44,9 @@ model CalonMurid {
   rt                        String?       @db.VarChar
   rw                        String?       @db.VarChar
   ibuId                     String?       @map("ibu_id") @db.VarChar
-  ibu                       OrangTua?     @relation("IbuRelation", fields: [ibuId], references: [id])
+  ibu                       OrangTua?     @relation("IbuRelation", fields: [ibuId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   ayahId                    String?       @map("ayah_id") @db.VarChar
-  ayah                      OrangTua?     @relation("AyahRelation", fields: [ayahId], references: [id])
+  ayah                      OrangTua?     @relation("AyahRelation", fields: [ayahId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   createdAt                 DateTime?     @default(now()) @map("created_at") @db.Timestamp(6)
   updatedAt                 DateTime?     @default(now()) @map("updated_at") @db.Timestamp(6)
   pendaftaran               Pendaftaran[]

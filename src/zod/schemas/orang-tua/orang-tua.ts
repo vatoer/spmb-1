@@ -3,6 +3,7 @@ import { jenisKelaminSchema } from "@/zod/schemas/shared";
 import { z } from "zod";
 
 export const ortuSchema = z.object({
+  id: z.string().optional(),
   nama: z
     .string()
     .min(3, { message: "Nama minimal 3 karakter" })

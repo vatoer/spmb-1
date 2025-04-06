@@ -83,6 +83,9 @@ export const StatusDomisiliEnum = z.enum([
   "LAINNYA",
 ]);
 
+// Get the type safely
+export type StatusDomisili = z.infer<typeof StatusDomisiliEnum>;
+
 export const domisiliSchema = z.object({
   statusDomisili: StatusDomisiliEnum,
   alamat: z.string().min(3).max(255),

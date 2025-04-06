@@ -1,4 +1,8 @@
-import { getPendaftaran } from "@/data/pendaftaran/pendaftaran";
+import {
+  getPendaftaran,
+  isPendaftaranWithCalonMurid,
+  mapDbToZodDataDiri,
+} from "@/data/pendaftaran/pendaftaran";
 import { auth } from "@/modules/auth/auth";
 import BreadcrumbMobile from "@/modules/pendaftaran/ui/components/formulir/breadcrumb/breadcrumb-mobile";
 import DataDiriForm from "@/modules/pendaftaran/ui/components/formulir/data-diri";
@@ -23,10 +27,21 @@ export default async function FormulirDataDiriPage({
     redirect("/formulir");
   }
 
+  if (!isPendaftaranWithCalonMurid(pendaftaran)) {
+    return redirect("/formulir");
+  }
+
+  const { calonMurid } = pendaftaran;
+
+  const dataDiri = mapDbToZodDataDiri(calonMurid);
+
   return (
     <div className="w-full flex flex-col justify-start items-start p-2 md:p-6">
       <BreadcrumbMobile pendaftaranId={pendaftaranId} title="Data Diri" />
-      <DataDiriForm pendaftaranId={pendaftaranId} />
+      <DataDiriForm
+        pendaftaranId={pendaftaranId}
+        defaultValuesDataDiri={dataDiri}
+      />
     </div>
   );
 }

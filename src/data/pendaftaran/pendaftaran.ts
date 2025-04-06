@@ -1,4 +1,14 @@
 import { dbSpmb } from "@/lib/db-spmb";
+import { DataDiri } from "@/zod/schemas/murid/murid";
+import { OrangTua as OrangTuaZod } from "@/zod/schemas/orang-tua/orang-tua";
+import {
+  Agama,
+  GolonganDarah,
+  JenisKelamin,
+  JenjangDikdasmen,
+  Kewarganegaraan,
+  StatusDomisili,
+} from "@/zod/schemas/shared";
 import { CalonMurid, OrangTua, Pendaftaran } from "@prisma-db-spmb/client";
 
 interface CalonMuridWithOrangTua extends CalonMurid {
@@ -6,7 +16,7 @@ interface CalonMuridWithOrangTua extends CalonMurid {
   ibu?: OrangTua | null;
 }
 
-interface PendaftaranWithCalonMurid extends Pendaftaran {
+export interface PendaftaranWithCalonMurid extends Pendaftaran {
   calonMurid?: CalonMuridWithOrangTua | null;
 }
 
@@ -29,18 +39,89 @@ export async function getPendaftaran(
     },
   });
 
-  // if pendaftaranId is provided, return a single object
-  if (pendaftaranId) {
-    const singlePendaftaran = pendaftaran.find(
-      (pendaftaran) => pendaftaran.id === pendaftaranId
-    );
-    return singlePendaftaran || null; // Return null if not found
-  }
-  // if no pendaftaranId is provided, return an array of pendaftaran
-  if (pendaftaran.length === 0) {
-    return null; // Return null if no pendaftaran found
-  }
-  // Return the array of pendaftaran
-
-  return pendaftaran;
+  // Return a single object if pendaftaranId is provided, otherwise return the array or null
+  return pendaftaranId
+    ? pendaftaran[0] || null // Return the first match or null if not found
+    : pendaftaran.length > 0
+    ? pendaftaran
+    : null; // Return the array or null if empty
 }
+
+export function isPendaftaranWithCalonMurid(
+  pendaftaran: PendaftaranWithCalonMurid | null | PendaftaranWithCalonMurid[]
+): pendaftaran is PendaftaranWithCalonMurid {
+  return (
+    pendaftaran !== null &&
+    !Array.isArray(pendaftaran) &&
+    typeof pendaftaran === "object" &&
+    "calonMurid" in pendaftaran
+  );
+}
+
+export const mapDbToZodDataDiri = (
+  calonMurid?: CalonMurid | null
+): DataDiri => {
+  let dataDiri: DataDiri = {
+    id: calonMurid?.id,
+    nama: calonMurid?.nama || "",
+    kk: calonMurid?.kk || "",
+    nik: calonMurid?.nik || "",
+    nisn: calonMurid?.nisn || "",
+    kewarganegaraan: (calonMurid?.kewarganegaraan as Kewarganegaraan) || "WNI",
+    keteranganKewarganegaraan: calonMurid?.keteranganKewarganegaraan,
+    paspor: calonMurid?.paspor,
+    tempatLahir: calonMurid?.tempatLahir || "",
+    tanggalLahir: new Date(calonMurid?.tanggalLahir || ""),
+    jenisKelamin:
+      (calonMurid?.jenisKelamin as JenisKelamin) || JenisKelamin.LakiLaki,
+    agama: (calonMurid?.agama as Agama) || Agama.Lainnya,
+    golonganDarah:
+      (calonMurid?.golonganDarah as GolonganDarah) || GolonganDarah.TIDAK_TAHU,
+    jenjangDikdasmen:
+      (calonMurid?.jenjangDikdasmen as JenjangDikdasmen) ||
+      JenjangDikdasmen.LAINNYA,
+    statusDomisili: (calonMurid?.statusDomisili as StatusDomisili) || "LAINNYA",
+    alamat: calonMurid?.alamat || "",
+    wilayahAdministratifId: calonMurid?.wilayahAdministratifId || "",
+    provinsi: calonMurid?.wilayahAdministratifId.slice(0, 2) || "-",
+    kotaKabupaten: calonMurid?.wilayahAdministratifId.slice(0, 4) || "-",
+    kecamatan: calonMurid?.wilayahAdministratifId.slice(0, 6) || "-",
+    desaKelurahan: calonMurid?.wilayahAdministratifId || "-",
+    rt: calonMurid?.rt || "",
+    rw: calonMurid?.rw || "",
+    mapCoordinates: calonMurid?.mapCoordinates || "",
+  };
+  return dataDiri;
+};
+
+export const mapDbToZodDataOrangTua = (
+  ayah?: OrangTua | null,
+  ibu?: OrangTua | null
+): OrangTuaZod => {
+  return {
+    ayah: {
+      ...ayah,
+      id: ayah?.id,
+      jenisKelamin: JenisKelamin.LakiLaki,
+      kk: ayah?.kk || "",
+      nik: ayah?.nik || "",
+      nama: ayah?.nama || "",
+      tahunWafat: ayah?.tahunWafat || null,
+      jenjangPendidikan: ayah?.jenjangPendidikan || "",
+      pekerjaan: ayah?.pekerjaanId || "",
+      pendapatan: ayah?.pendapatanId || "",
+    },
+    ibu: {
+      ...ibu,
+      id: ibu?.id,
+      jenisKelamin: JenisKelamin.Perempuan,
+      kk: ibu?.kk || "",
+      nik: ibu?.nik || "",
+      nama: ibu?.nama || "",
+      tahunWafat: ibu?.tahunWafat || null,
+      jenjangPendidikan: ibu?.jenjangPendidikan || "",
+      pekerjaan: ibu?.pekerjaanId || "",
+      pendapatan: ibu?.pendapatanId || "",
+    },
+  };
+};

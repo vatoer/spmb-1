@@ -23,7 +23,7 @@ import { simpanDataOrangTua } from "@/modules/pendaftaran/actions/data-orang-tua
 import { Select } from "@/modules/pendaftaran/ui/components/formulir/select";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import { OrangTua, orangTuaSchema } from "@/zod/schemas/orang-tua/orang-tua";
-import { JenisKelamin, JenjangPendidikan } from "@/zod/schemas/shared";
+import { JenjangPendidikan } from "@/zod/schemas/shared";
 import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -42,26 +42,26 @@ const SelectPekerjaan = dynamic(
   }
 );
 
-const defaultValuesDataOrangTua: OrangTua = {
-  ibu: {
-    nama: "",
-    nik: "",
-    kk: "",
-    pekerjaan: "",
-    jenisKelamin: JenisKelamin.Perempuan,
-    jenjangPendidikan: "",
-    pendapatan: "",
-  },
-  ayah: {
-    nama: "",
-    nik: "",
-    kk: "",
-    jenisKelamin: JenisKelamin.LakiLaki,
-    pekerjaan: "",
-    jenjangPendidikan: "",
-    pendapatan: "",
-  },
-};
+// const defaultValuesDataOrangTua: OrangTua = {
+//   ibu: {
+//     nama: "",
+//     nik: "",
+//     kk: "",
+//     pekerjaan: "",
+//     jenisKelamin: JenisKelamin.Perempuan,
+//     jenjangPendidikan: "",
+//     pendapatan: "",
+//   },
+//   ayah: {
+//     nama: "",
+//     nik: "",
+//     kk: "",
+//     jenisKelamin: JenisKelamin.LakiLaki,
+//     pekerjaan: "",
+//     jenjangPendidikan: "",
+//     pendapatan: "",
+//   },
+// };
 
 const jenjangPendidikanOptions = Object.entries(JenjangPendidikan).map(
   ([value, label]) => ({
@@ -73,10 +73,12 @@ const jenjangPendidikanOptions = Object.entries(JenjangPendidikan).map(
 interface DataOrangTuaFormProps {
   nextStep?: () => void;
   pendaftaranId: string;
+  defaultValuesDataOrangTua: OrangTua;
 }
 export const DataOrangTuaForm = ({
   nextStep = () => {},
   pendaftaranId,
+  defaultValuesDataOrangTua,
 }: DataOrangTuaFormProps) => {
   const form = useForm<OrangTua>({
     resolver: zodResolver(orangTuaSchema),

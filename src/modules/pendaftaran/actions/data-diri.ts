@@ -1,5 +1,9 @@
 "use server";
 import { getPrismaErrorResponse } from "@/actions/prisma-error-response";
+import {
+  getPendaftaran,
+  isPendaftaranWithCalonMurid,
+} from "@/data/pendaftaran/pendaftaran";
 import { dbSpmb } from "@/lib/db-spmb";
 import { auth } from "@/modules/auth/auth";
 import { ActionResponse } from "@/types/response";
@@ -24,9 +28,16 @@ export async function simpanDataDiri(
   }
 
   try {
+    // Check if pendaftaranId is valid
+    const pendaftaran = await getPendaftaran(user.id, pendaftaranId);
+    let dataDiriId = createId();
+    if (isPendaftaranWithCalonMurid(pendaftaran)) {
+      dataDiriId = pendaftaran.calonMurid?.id || createId();
+    }
+
     const newCalonMurid = await dbSpmb.calonMurid.upsert({
       where: {
-        id: dataDiri.id || createId(),
+        id: dataDiriId,
         userId: user.id,
       },
       create: {
