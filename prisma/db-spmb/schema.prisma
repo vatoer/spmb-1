@@ -66,6 +66,17 @@ model WilayahAdministratif {
   @@map("wilayah_administratif")
 }
 
+model DapoWilayah {
+  kodeWilayah               String @id @map("kode_wilayah") @db.VarChar
+  nama                      String @db.VarChar
+  idLevelWilayah            String @map("id_level_wilayah") @db.VarChar
+  mstKodeWilayah            String @map("mst_kode_wilayah") @db.VarChar
+  indukProvinsi             String @map("induk_provinsi") @db.VarChar
+  kodeWilayahIndukProvinsi  String @map("kode_wilayah_induk_provinsi") @db.VarChar
+  indukKabupaten            String @map("induk_kabupaten") @db.VarChar
+  kodeWilayahIndukKabupaten String @map("kode_wilayah_induk_kabupaten") @db.VarChar
+}
+
 model Pekerjaan {
   id           String      @id
   nama         String      @db.VarChar
