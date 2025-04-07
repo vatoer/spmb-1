@@ -20,6 +20,7 @@ import {
 } from "@/actions/common/rentang-pendapatan";
 import { Skeleton } from "@/components/ui/skeleton";
 import { simpanDataOrangTua } from "@/modules/pendaftaran/actions/data-orang-tua";
+import FormulirContainer from "@/modules/pendaftaran/ui/components/formulir/formulir-container";
 import { Select } from "@/modules/pendaftaran/ui/components/formulir/select";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import { OrangTua, orangTuaSchema } from "@/zod/schemas/orang-tua/orang-tua";
@@ -119,353 +120,344 @@ export const DataOrangTuaForm = ({
   }, []);
 
   return (
-    <div className="w-full max-w-3xl px-2 md:p-4 md:shadow-md border-none md:border md:border-gray-300 bg-white rounded-lg">
-      <div className="flex flex-col w-full items-center py-4 md:py-0">
-        <h1 className="hidden md:block text-2xl md:text-2xl text-center font-semibold">
-          Data Orang Tua
-        </h1>
-        <Form {...form}>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-full space-y-2 pb-24"
+    <FormulirContainer title="Data Orang Tua">
+      <Form {...form}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full space-y-2 pb-24"
+        >
+          <h1 className="text-lg">Data Ibu</h1>
+          <FormField
+            control={form.control}
+            name="ibu.nama"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nama</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="nama"
+                    {...field}
+                    value={field.value ?? ""}
+                    className="bg-background h-12"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex flex-col md:flex-row gap-2 items-start">
+            <FormField
+              control={form.control}
+              name="ibu.kk"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>Nomor Kartu Keluarga</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="16 digit"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="bg-background h-12"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ibu.nik"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>NIK</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="16 digit"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="bg-background h-12"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-2 items-start">
+            <FormField
+              control={form.control}
+              name="ibu.jenjangPendidikan"
+              render={({ field }) => (
+                <FormItem className="md:w-1/3">
+                  <FormLabel htmlFor="ibu-jenjang-pendidikan-form-item">
+                    Jenjang Pendidikan
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative w-full">
+                      <Select
+                        id="ibu-jenjang-pendidikan-form-item"
+                        {...field}
+                        className="h-12"
+                      >
+                        <option value="">Pilih Jenjang Pendidikan Ibu</option>
+                        {jenjangPendidikanOptions.map((option) => (
+                          <option
+                            key={option.value}
+                            value={option.value}
+                            className="custom-select-option"
+                          >
+                            {option.label}
+                          </option>
+                        ))}
+                      </Select>
+                      <ChevronDown
+                        size={20}
+                        className="peer-focus:visible text-gray-500 opacity-50 peer-focus:opacity-100 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ibu.pekerjaan"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>Pekerjaan</FormLabel>
+                  <FormControl>
+                    <SelectPekerjaan
+                      value={field.value}
+                      onChange={(selected, { action }) => {
+                        let value = "";
+                        if (typeof selected === "object" && selected) {
+                          value = selected.value;
+                        } else {
+                          value = selected ?? "";
+                        }
+                        field.onChange(value);
+                        if (action === "clear") {
+                          console.log("pekerjaan ibu clear", value);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ibu.pendapatan"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>Pendapatan perbulan</FormLabel>
+                  <FormControl>
+                    <Select
+                      id="ibu-rentang-pendapatan-form-item"
+                      {...field}
+                      // value={field.value ?? ""}
+                      className="h-12"
+                    >
+                      <option value="">Pilih Rentang Pendapatan</option>
+                      {rentangPendapatanOptions.map((option) => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                          className="custom-select-option"
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="h-0 py-4 border-b border-gray-100"></div>
+
+          <h1 className="text-lg pt-4">Data Ayah</h1>
+
+          <FormField
+            control={form.control}
+            name="ayah.nama"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nama</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="nama"
+                    {...field}
+                    value={field.value ?? ""}
+                    className="bg-background h-12"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex flex-col md:flex-row gap-2 items-start">
+            <FormField
+              control={form.control}
+              name="ayah.kk"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>Nomor Kartu Keluarga</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="16 digit"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="bg-background h-12"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ayah.nik"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>NIK</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="16 digit"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="bg-background h-12"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-2 items-start">
+            <FormField
+              control={form.control}
+              name="ayah.jenjangPendidikan"
+              render={({ field }) => (
+                <FormItem className="md:w-1/3">
+                  <FormLabel htmlFor="ayah-jenjang-pendidikan-form-item">
+                    Jenjang Pendidikan
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative w-full">
+                      <Select
+                        id="ayah-jenjang-pendidikan-form-item"
+                        {...field}
+                        // value={field.value ?? ""}
+                        className="h-12"
+                      >
+                        <option value="">Pilih Jenjang Pendidikan Ayah</option>
+                        {jenjangPendidikanOptions.map((option) => (
+                          <option
+                            key={option.value}
+                            value={option.value}
+                            className="custom-select-option"
+                          >
+                            {option.label}
+                          </option>
+                        ))}
+                      </Select>
+                      <ChevronDown
+                        size={20}
+                        className="peer-focus:visible text-gray-500 opacity-50 peer-focus:opacity-100 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ayah.pekerjaan"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>Pekerjaan</FormLabel>
+                  <FormControl>
+                    <SelectPekerjaan
+                      value={field.value}
+                      onChange={(selected, { action }) => {
+                        let value = "";
+                        if (typeof selected === "object" && selected) {
+                          value = selected.value;
+                        } else {
+                          value = selected ?? "";
+                        }
+                        field.onChange(value);
+                        if (action === "clear") {
+                          console.log("provinsi clear", value);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ayah.pendapatan"
+              render={({ field }) => (
+                <FormItem className="md:w-1/2">
+                  <FormLabel>Pendapatan perbulan</FormLabel>
+                  <FormControl>
+                    <Select
+                      id="ayah-rentang-pendapatan-form-item"
+                      {...field}
+                      // value={field.value ?? ""}
+                      className="h-12"
+                    >
+                      <option value="">Pilih Rentang Pendapatan</option>
+                      {rentangPendapatanOptions.map((option) => (
+                        <option
+                          key={option.value}
+                          value={option.value}
+                          className="custom-select-option"
+                        >
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <CumulativeErrors errors={form.formState.errors} verbose />
+
+          <div
+            className={cn(
+              "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
+            )}
           >
-            <h1 className="text-lg">Data Ibu</h1>
-            <FormField
-              control={form.control}
-              name="ibu.nama"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nama</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="nama"
-                      {...field}
-                      value={field.value ?? ""}
-                      className="bg-background h-12"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex flex-col md:flex-row gap-2 items-start">
-              <FormField
-                control={form.control}
-                name="ibu.kk"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>Nomor Kartu Keluarga</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="16 digit"
-                        {...field}
-                        value={field.value ?? ""}
-                        className="bg-background h-12"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ibu.nik"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>NIK</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="16 digit"
-                        {...field}
-                        value={field.value ?? ""}
-                        className="bg-background h-12"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-2 items-start">
-              <FormField
-                control={form.control}
-                name="ibu.jenjangPendidikan"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/3">
-                    <FormLabel htmlFor="ibu-jenjang-pendidikan-form-item">
-                      Jenjang Pendidikan
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative w-full">
-                        <Select
-                          id="ibu-jenjang-pendidikan-form-item"
-                          {...field}
-                          className="h-12"
-                        >
-                          <option value="">Pilih Jenjang Pendidikan Ibu</option>
-                          {jenjangPendidikanOptions.map((option) => (
-                            <option
-                              key={option.value}
-                              value={option.value}
-                              className="custom-select-option"
-                            >
-                              {option.label}
-                            </option>
-                          ))}
-                        </Select>
-                        <ChevronDown
-                          size={20}
-                          className="peer-focus:visible text-gray-500 opacity-50 peer-focus:opacity-100 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ibu.pekerjaan"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>Pekerjaan</FormLabel>
-                    <FormControl>
-                      <SelectPekerjaan
-                        value={field.value}
-                        onChange={(selected, { action }) => {
-                          let value = "";
-                          if (typeof selected === "object" && selected) {
-                            value = selected.value;
-                          } else {
-                            value = selected ?? "";
-                          }
-                          field.onChange(value);
-                          if (action === "clear") {
-                            console.log("pekerjaan ibu clear", value);
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ibu.pendapatan"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>Pendapatan perbulan</FormLabel>
-                    <FormControl>
-                      <Select
-                        id="ibu-rentang-pendapatan-form-item"
-                        {...field}
-                        // value={field.value ?? ""}
-                        className="h-12"
-                      >
-                        <option value="">Pilih Rentang Pendapatan</option>
-                        {rentangPendapatanOptions.map((option) => (
-                          <option
-                            key={option.value}
-                            value={option.value}
-                            className="custom-select-option"
-                          >
-                            {option.label}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="h-0 py-4 border-b border-gray-100"></div>
-
-            <h1 className="text-lg pt-4">Data Ayah</h1>
-
-            <FormField
-              control={form.control}
-              name="ayah.nama"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nama</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="nama"
-                      {...field}
-                      value={field.value ?? ""}
-                      className="bg-background h-12"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex flex-col md:flex-row gap-2 items-start">
-              <FormField
-                control={form.control}
-                name="ayah.kk"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>Nomor Kartu Keluarga</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="16 digit"
-                        {...field}
-                        value={field.value ?? ""}
-                        className="bg-background h-12"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ayah.nik"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>NIK</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="16 digit"
-                        {...field}
-                        value={field.value ?? ""}
-                        className="bg-background h-12"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-2 items-start">
-              <FormField
-                control={form.control}
-                name="ayah.jenjangPendidikan"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/3">
-                    <FormLabel htmlFor="ayah-jenjang-pendidikan-form-item">
-                      Jenjang Pendidikan
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative w-full">
-                        <Select
-                          id="ayah-jenjang-pendidikan-form-item"
-                          {...field}
-                          // value={field.value ?? ""}
-                          className="h-12"
-                        >
-                          <option value="">
-                            Pilih Jenjang Pendidikan Ayah
-                          </option>
-                          {jenjangPendidikanOptions.map((option) => (
-                            <option
-                              key={option.value}
-                              value={option.value}
-                              className="custom-select-option"
-                            >
-                              {option.label}
-                            </option>
-                          ))}
-                        </Select>
-                        <ChevronDown
-                          size={20}
-                          className="peer-focus:visible text-gray-500 opacity-50 peer-focus:opacity-100 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ayah.pekerjaan"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>Pekerjaan</FormLabel>
-                    <FormControl>
-                      <SelectPekerjaan
-                        value={field.value}
-                        onChange={(selected, { action }) => {
-                          let value = "";
-                          if (typeof selected === "object" && selected) {
-                            value = selected.value;
-                          } else {
-                            value = selected ?? "";
-                          }
-                          field.onChange(value);
-                          if (action === "clear") {
-                            console.log("provinsi clear", value);
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="ayah.pendapatan"
-                render={({ field }) => (
-                  <FormItem className="md:w-1/2">
-                    <FormLabel>Pendapatan perbulan</FormLabel>
-                    <FormControl>
-                      <Select
-                        id="ayah-rentang-pendapatan-form-item"
-                        {...field}
-                        // value={field.value ?? ""}
-                        className="h-12"
-                      >
-                        <option value="">Pilih Rentang Pendapatan</option>
-                        {rentangPendapatanOptions.map((option) => (
-                          <option
-                            key={option.value}
-                            value={option.value}
-                            className="custom-select-option"
-                          >
-                            {option.label}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <CumulativeErrors errors={form.formState.errors} verbose />
-
-            <div
-              className={cn(
-                "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
-              )}
+            <Button
+              type="submit"
+              size={"lg"}
+              className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
+              disabled={isSubmitting}
             >
-              <Button
-                type="submit"
-                size={"lg"}
-                className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
-                disabled={isSubmitting}
-              >
-                <span className="text-sm font-semibold">
-                  Simpan Data Orang Tua
-                </span>
-                {isSubmitting && (
-                  <Loader className="animate-spin mr-2 h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
+              <span className="text-sm font-semibold">
+                Simpan Data Orang Tua
+              </span>
+              {isSubmitting && <Loader className="animate-spin mr-2 h-4 w-4" />}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </FormulirContainer>
   );
 };
 

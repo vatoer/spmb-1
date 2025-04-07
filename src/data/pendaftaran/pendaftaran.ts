@@ -1,6 +1,7 @@
 import { dbSpmb } from "@/lib/db-spmb";
 import { DataDiri } from "@/zod/schemas/murid/murid";
 import { OrangTua as OrangTuaZod } from "@/zod/schemas/orang-tua/orang-tua";
+import { SekolahAsal } from "@/zod/schemas/sekolah/sekolah";
 import {
   Agama,
   GolonganDarah,
@@ -123,5 +124,18 @@ export const mapDbToZodDataOrangTua = (
       pekerjaan: ibu?.pekerjaanId || "",
       pendapatan: ibu?.pendapatanId || "",
     },
+  };
+};
+
+export const mapDbToZodSekolahAsal = (
+  pendaftaran: Pendaftaran
+): SekolahAsal => {
+  const tahun = new Date().getFullYear();
+  return {
+    npsn: pendaftaran.npsnSekolahAsal || "-",
+    namaSekolah: pendaftaran.namaSekolahAsal || "-",
+    alamatSekolah: pendaftaran.alamatSekolahAsal || "-",
+    tahunMasuk: pendaftaran.tahunMasukSekolahAsal || tahun,
+    tahunLulus: pendaftaran.tahunLulusSekolahAsal || tahun,
   };
 };

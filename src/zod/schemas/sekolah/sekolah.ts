@@ -1,29 +1,29 @@
 import { z } from "zod";
 
-export const dataSekolahAsalSchema = z.object({
+export const sekolahAsalSchema = z.object({
   npsn: z
     .string()
-    .min(1, {
-      message:
-        "nisn sekolah tidak boleh kosong, isi dengan tanda - jika tidak ada",
+    .refine((value) => value === "-" || value.length === 8, {
+      message: "isi dengan tanda '-' jika tidak ada NPSN atau 8 karakter",
     })
-    .max(8)
-    .optional(),
+    .transform((value) => (value === "-" ? null : value))
+    .nullable(),
   namaSekolah: z
     .string()
-    .min(1, {
-      message:
-        "Nama sekolah tidak boleh kosong, isi dengan tanda - jika tidak ada",
+    .refine((value) => value === "-" || value.length >= 3, {
+      message: "isi nama sekolah dengan '-' atau minimal 3 karakter",
     })
-    .max(255),
+    .transform((value) => (value === "-" ? null : value))
+    .nullable(),
   alamatSekolah: z
     .string()
-    .min(1, {
-      message: "Isi dengan tanda - jika tidak ada",
+    .refine((value) => value === "-" || value.length >= 3, {
+      message: "isi alamat dengan '-' atau minimal 3 karakter",
     })
-    .max(255),
-  tahunMasuk: z.coerce.number().optional(), // before we can use tahunMasuk: z.string().optional().transform(Number),
-  tahunLulus: z.coerce.number().optional(),
+    .transform((value) => (value === "-" ? null : value))
+    .nullable(),
+  tahunMasuk: z.coerce.number(), // before we can use tahunMasuk: z.string()
+  tahunLulus: z.coerce.number(),
 });
 
-export type DataSekolahAsal = z.infer<typeof dataSekolahAsalSchema>;
+export type SekolahAsal = z.infer<typeof sekolahAsalSchema>;

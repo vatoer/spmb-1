@@ -10,59 +10,48 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { DataSekolahAsal, dataSekolahAsalSchema } from "@/zod/schemas/siswa";
+import { SekolahAsal, sekolahAsalSchema } from "@/zod/schemas/sekolah/sekolah";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { SelectProvinsi } from "@/components/select-provinsi";
 import { cn } from "@/lib/utils";
+import FormulirContainer from "@/modules/pendaftaran/ui/components/formulir/formulir-container";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-interface DataSekolahAsalFormProps {
+interface SekolahAsalFormProps {
   nextStep?: () => void;
+  defaultValuesSekolahAsal: SekolahAsal;
 }
 
-const defaultValuesDataSekolahAsal: DataSekolahAsal = {
-  npsn: "",
-  namaSekolah: "",
-  alamatSekolah: "",
-  tahunMasuk: undefined,
-  tahunLulus: undefined,
-};
-
-export const DataSekolahAsalForm = ({
+export const SekolahAsalForm = ({
   nextStep = () => {},
-}: DataSekolahAsalFormProps) => {
-  const { formData, updateFormData } = useWizardForm(
-    defaultValuesDataSekolahAsal
-  );
-  const form = useForm<DataSekolahAsal>({
-    resolver: zodResolver(dataSekolahAsalSchema),
-    defaultValues: formData,
+  defaultValuesSekolahAsal,
+}: SekolahAsalFormProps) => {
+  const form = useForm<SekolahAsal>({
+    resolver: zodResolver(sekolahAsalSchema),
+    defaultValues: defaultValuesSekolahAsal,
   });
 
   const { handleSubmit } = form;
 
-  const onSubmit = (data: DataSekolahAsal) => {
+  const onSubmit = (data: SekolahAsal) => {
     console.log(data);
-    updateFormData(data);
     nextStep();
   };
 
   useEffect(() => {
-    form.reset(formData);
+    form.reset(defaultValuesSekolahAsal);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
+  }, []);
 
   return (
-    <div className="flex flex-col w-full items-center">
+    <FormulirContainer title="Sekolah Asal">
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full space-y-2 pb-24"
         >
-          <h1 className="text-lg">Data Sekolah Asal</h1>
-
           <div className="flex flex-col md:flex-row gap-2">
             <FormField
               control={form.control}
@@ -165,8 +154,6 @@ export const DataSekolahAsalForm = ({
             />
           </div>
 
-          <div className="h-0 py-4 border-b-2"></div>
-
           <CumulativeErrors errors={form.formState.errors} verbose />
 
           <div
@@ -178,8 +165,8 @@ export const DataSekolahAsalForm = ({
           </div>
         </form>
       </Form>
-    </div>
+    </FormulirContainer>
   );
 };
 
-export default DataSekolahAsalForm;
+export default SekolahAsalForm;

@@ -19,6 +19,13 @@ model Pendaftaran {
   calonMuridId String?     @map("calon_murid_id") @db.VarChar
   calonMurid   CalonMurid? @relation(fields: [calonMuridId], references: [id])
 
+  // keterangan sekolah asal diisi jika sekolah asal tidak mempunyai NPSN 
+  tahunMasukSekolahAsal Int?    @map("tahun_masuk_sekolah_asal")
+  tahunLulusSekolahAsal Int?    @map("tahun_lulus_sekolah_asal")
+  npsnSekolahAsal       String? @map("npsn_sekolah_asal") @db.VarChar
+  namaSekolahAsal       String? @map("nama_sekolah_asal") @db.VarChar
+  alamatSekolahAsal     String? @map("alamat_sekolah_asal") @db.VarChar
+
   @@map("pendaftaran")
 }
 
