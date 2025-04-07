@@ -58,6 +58,7 @@ model CalonMurid {
   updatedAt                 DateTime?     @default(now()) @map("updated_at") @db.Timestamp(6)
   pendaftaran               Pendaftaran[]
   userId                    String        @map("user_id") @db.VarChar
+  Nilai                     Nilai[]
 
   @@map("calon_murid")
 }
@@ -159,4 +160,35 @@ model OrangTua {
   updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
 
   @@map("orang_tua")
+}
+
+model MataPelajaran {
+  id   String @id @default(cuid())
+  nama String @db.VarChar
+  kode String @db.VarChar
+
+  jenjangDikdasmen String @map("jenjang_dikdasmen") @db.VarChar
+
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+  Nilai     Nilai[]
+
+  @@map("mata_pelajaran")
+}
+
+model Nilai {
+  id              String @id @default(cuid())
+  mataPelajaranId String @map("mata_pelajaran_id") @db.VarChar
+  calonMuridId    String @map("calon_murid_id") @db.VarChar
+  nilai           Int
+
+  createdBy String?   @map("created_by") @db.VarChar // user id
+  updatedBy String?   @map("updated_by") @db.VarChar
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  calonMurid    CalonMurid    @relation(fields: [calonMuridId], references: [id])
+  mataPelajaran MataPelajaran @relation(fields: [mataPelajaranId], references: [id])
+
+  @@map("nilai")
 }

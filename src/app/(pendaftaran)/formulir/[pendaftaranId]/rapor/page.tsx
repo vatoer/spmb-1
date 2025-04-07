@@ -1,4 +1,5 @@
 import BreadcrumbMobile from "@/modules/pendaftaran/ui/components/formulir/breadcrumb/breadcrumb-mobile";
+import RaporForm from "@/modules/pendaftaran/ui/components/formulir/rapor";
 
 export default async function FormulirRaporPage({
   params,
@@ -9,8 +10,8 @@ export default async function FormulirRaporPage({
   const { pendaftaranId } = await params;
   return (
     <div className="w-full flex flex-col justify-start items-start p-2 md:p-6">
-      <BreadcrumbMobile pendaftaranId={pendaftaranId} title="Data Orang Tua" />
-      <div>formulir Rapor</div>
+      <BreadcrumbMobile pendaftaranId={pendaftaranId} title="Rapor" />
+      <RaporForm />
     </div>
   );
 }
