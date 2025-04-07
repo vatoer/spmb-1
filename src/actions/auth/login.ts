@@ -8,11 +8,12 @@ import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 type Login = z.infer<typeof LoginSchema>;
 
-const DEFAULT_ROUTE_AFTER_LOGIN = "/";
+// const DEFAULT_ROUTE_AFTER_LOGIN = "/";
 
 export const login = async (
   data: Login,
-  redirectTo: string = DEFAULT_ROUTE_AFTER_LOGIN
+  redirect: boolean = true,
+  redirectTo?: string
 ): Promise<ActionResponse<boolean | z.ZodError>> => {
   console.log(data);
   const validateFields = LoginSchema.safeParse(data);
@@ -33,9 +34,11 @@ export const login = async (
       email,
       password,
       redirectTo: redirectTo,
-      redirect: true,
+      redirect: redirect,
     });
-    revalidatePath(redirectTo);
+    if (redirectTo) {
+      revalidatePath(redirectTo);
+    }
     return { success: true, data: true };
   } catch (error) {
     if (error instanceof AuthError) {

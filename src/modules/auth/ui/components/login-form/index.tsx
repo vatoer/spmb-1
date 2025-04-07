@@ -17,7 +17,7 @@ const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const {
     register,
@@ -33,7 +33,7 @@ const LoginForm = () => {
 
   const onSubmit = (data: Login) => {
     startTransition(async () => {
-      login(data, redirect).then((response) => {
+      login(data, true, redirectTo).then((response) => {
         if (response?.success === false) {
           setError(response.error);
         }

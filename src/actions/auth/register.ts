@@ -27,10 +27,15 @@ export const register = async (
       };
     }
 
-    const loginResponse = await login({
-      email: data.email,
-      password: data.password,
-    });
+    const loginResponse = await login(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      false
+    );
+
+    console.log("loginResponse", loginResponse);
 
     if (loginResponse?.success === false) {
       return {
