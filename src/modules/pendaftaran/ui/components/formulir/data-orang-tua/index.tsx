@@ -24,7 +24,7 @@ import { Select } from "@/modules/pendaftaran/ui/components/formulir/select";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import { OrangTua, orangTuaSchema } from "@/zod/schemas/orang-tua/orang-tua";
 import { JenjangPendidikan } from "@/zod/schemas/shared";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -85,7 +85,8 @@ export const DataOrangTuaForm = ({
     defaultValues: defaultValuesDataOrangTua,
   });
 
-  const { handleSubmit } = form;
+  const { handleSubmit, formState } = form;
+  const { isSubmitting } = formState;
 
   const onSubmit = async (data: OrangTua) => {
     console.log(data);
@@ -444,10 +445,22 @@ export const DataOrangTuaForm = ({
 
             <div
               className={cn(
-                "flex flex-col sm:flex-row  sm:justify-end gap-2 mt-6"
+                "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
               )}
             >
-              <Button type="submit">Simpan</Button>
+              <Button
+                type="submit"
+                size={"lg"}
+                className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
+                disabled={isSubmitting}
+              >
+                <span className="text-sm font-semibold">
+                  Simpan Data Orang Tua
+                </span>
+                {isSubmitting && (
+                  <Loader className="animate-spin mr-2 h-4 w-4" />
+                )}
+              </Button>
             </div>
           </form>
         </Form>
