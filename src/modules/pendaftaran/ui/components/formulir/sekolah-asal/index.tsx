@@ -14,29 +14,67 @@ import { SekolahAsal, sekolahAsalSchema } from "@/zod/schemas/sekolah/sekolah";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { SelectProvinsi } from "@/components/select-provinsi";
 import { cn } from "@/lib/utils";
+import {
+  getSekolahAsalByNpsn,
+  simpanSekolahAsal,
+} from "@/modules/pendaftaran/actions/sekolah-asal";
 import FormulirContainer from "@/modules/pendaftaran/ui/components/formulir/formulir-container";
 import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
-import { useEffect } from "react";
+import { Loader } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface SekolahAsalFormProps {
   nextStep?: () => void;
   defaultValuesSekolahAsal: SekolahAsal;
+  pendaftaranId: string;
 }
 
 export const SekolahAsalForm = ({
   nextStep = () => {},
   defaultValuesSekolahAsal,
+  pendaftaranId,
 }: SekolahAsalFormProps) => {
   const form = useForm<SekolahAsal>({
     resolver: zodResolver(sekolahAsalSchema),
     defaultValues: defaultValuesSekolahAsal,
   });
 
-  const { handleSubmit } = form;
+  const [isValidNpsn, setIsValidNpsn] = useState(false);
 
-  const onSubmit = (data: SekolahAsal) => {
+  const { handleSubmit, formState, watch } = form;
+  const { isSubmitting } = formState;
+
+  const npsn = watch("npsn");
+
+  useEffect(() => {
+    if (npsn?.length === 8) {
+      const fetchData = async () => {
+        const response = await getSekolahAsalByNpsn(npsn);
+        if (response.success) {
+          setIsValidNpsn(true);
+          form.setValue("namaSekolah", response.data.nama);
+          form.setValue("alamatSekolah", response.data.alamat);
+        } else {
+          toast.error(response.message);
+          form.setValue("namaSekolah", "-");
+          form.setValue("alamatSekolah", "-");
+        }
+      };
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [npsn]);
+
+  const onSubmit = async (data: SekolahAsal) => {
     console.log(data);
+    const response = await simpanSekolahAsal(data, pendaftaranId);
+    if (response.success) {
+      toast.success("Data Sekolah Asal berhasil disimpan");
+    } else {
+      toast.error(response.message);
+    }
     nextStep();
   };
 
@@ -52,7 +90,7 @@ export const SekolahAsalForm = ({
           onSubmit={handleSubmit(onSubmit)}
           className="w-full space-y-2 pb-24"
         >
-          <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex flex-col md:flex-row gap-2 items-start">
             <FormField
               control={form.control}
               name="npsn"
@@ -80,6 +118,7 @@ export const SekolahAsalForm = ({
                   <FormLabel>Nama Sekolah</FormLabel>
                   <FormControl>
                     <Input
+                      disabled={isValidNpsn}
                       placeholder="nama sekolah"
                       {...field}
                       value={field.value ?? ""}
@@ -100,6 +139,7 @@ export const SekolahAsalForm = ({
                 <FormLabel>Alamat Sekolah</FormLabel>
                 <FormControl>
                   <Input
+                    disabled={isValidNpsn}
                     placeholder="alamat sekolah"
                     {...field}
                     value={field.value ?? ""}
@@ -158,10 +198,18 @@ export const SekolahAsalForm = ({
 
           <div
             className={cn(
-              "flex flex-col sm:flex-row  sm:justify-end gap-2 mt-6"
+              "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
             )}
           >
-            <Button type="submit">Simpan</Button>
+            <Button
+              type="submit"
+              size={"lg"}
+              className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
+              disabled={isSubmitting}
+            >
+              <span className="text-sm font-semibold">Simpan Sekolah Asal</span>
+              {isSubmitting && <Loader className="animate-spin mr-2 h-4 w-4" />}
+            </Button>
           </div>
         </form>
       </Form>

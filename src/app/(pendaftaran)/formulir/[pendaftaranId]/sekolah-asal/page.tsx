@@ -33,7 +33,10 @@ export default async function FormulirSekolahAsalPage({
   return (
     <div className="w-full flex flex-col justify-start items-start p-2 md:p-6">
       <BreadcrumbMobile pendaftaranId={pendaftaranId} title="Sekolah Asal" />
-      <SekolahAsalForm defaultValuesSekolahAsal={sekolahAsal} />
+      <SekolahAsalForm
+        defaultValuesSekolahAsal={sekolahAsal}
+        pendaftaranId={pendaftaranId}
+      />
     </div>
   );
 }
