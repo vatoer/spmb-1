@@ -55,6 +55,36 @@ model CalonMurid {
   @@map("calon_murid")
 }
 
+model Sekolah {
+  id               String    @id @default(cuid())
+  nama             String    @db.VarChar
+  npsn             String?   @db.VarChar(10)
+  status           String?   @db.VarChar
+  bentukPendidikan String?   @map("bentuk_pendidikan")
+  alamat           String    @db.VarChar
+  mapCoordinates   String?   @map("map_coordinates") @db.VarChar
+  kodePos          String?   @map("kode_pos") @db.VarChar
+  dapoWilayahId    String?   @map("dapo_wilayah_id") @db.VarChar // ini adalah kode wilayah dari dapo_wilayah untuk kecamatan
+  kelurahanDesa    String?   @map("kelurahan_desa") @db.VarChar
+  telp             String?   @db.VarChar
+  email            String?   @db.VarChar
+  website          String?   @db.VarChar
+  akreditasi       String?   @db.VarChar
+  kurikulum        String?   @db.VarChar
+  visi             String?   @db.VarChar
+  misi             String?   @db.VarChar
+  fasilitas        String[]  @db.VarChar
+  logo             String?   @db.VarChar
+  berandaHtml      String?   @map("beranda_html")
+  berandaBanner    String?   @map("beranda_banner") @db.VarChar
+  berandaPlaintext String?   @map("beranda_plaintext")
+  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
+
+  @@unique(npsn)
+  @@map("sekolah")
+}
+
 model WilayahAdministratif {
   id         String                 @id
   nama       String                 @db.VarChar
@@ -75,6 +105,8 @@ model DapoWilayah {
   kodeWilayahIndukProvinsi  String @map("kode_wilayah_induk_provinsi") @db.VarChar
   indukKabupaten            String @map("induk_kabupaten") @db.VarChar
   kodeWilayahIndukKabupaten String @map("kode_wilayah_induk_kabupaten") @db.VarChar
+
+  @@map("dapo_wilayah")
 }
 
 model Pekerjaan {
@@ -97,7 +129,7 @@ model RentangPendapatan {
   updatedAt    DateTime?  @default(now()) @map("updated_at") @db.Timestamp(6)
   OrangTua     OrangTua[]
 
-  @@map("rentang_penghasilan")
+  @@map("rentang_pendapatan")
 }
 
 model OrangTua {
