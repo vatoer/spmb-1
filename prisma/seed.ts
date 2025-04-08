@@ -118,6 +118,7 @@ interface MataPelajaran {
   nama: string;
   kode: string;
   jenjang_dikdasmen: string;
+  urutan: string;
 }
 
 const seedMataPelajaran = async (): Promise<void> => {
@@ -137,6 +138,7 @@ const seedMataPelajaran = async (): Promise<void> => {
                 nama: row.nama,
                 kode: row.kode,
                 jenjangDikdasmen: row.jenjang_dikdasmen,
+                urutan: Number(row.urutan),
               },
             });
           }

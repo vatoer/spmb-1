@@ -1,13 +1,13 @@
-"id";"nama";"kode";"jenjang_dikdasmen"
-BENSMP;Bahasa Inggris;BEN;SMP
-MTKSMP;Matematika;MTK;SMP
-IPASMP;IPA;IPA;SMP
-PABSMP;Pendidikan Agama & Budi Pekerti;PAB;SMP
-IPSSMP;IPS;IPS;SMP
-BIDSMA;Bahasa Indonesia;BID;SMA
-BIDSMP;Bahasa Indonesia;BID;SMP
-BENSMA;Bahasa Inggris;BEN;SMA
-MTKSMA;Matematika;MTK;SMA
-IPASMA;IPA;IPA;SMA
-IPSSMA;IPS;IPS;SMA
-PABSMA;Pendidikan Agama & Budi Pekerti;PAB;SMA
+"id";"nama";"kode";"jenjang_dikdasmen";urutan
+BENSMP;Bahasa Inggris;BEN;SMP;5
+MTKSMP;Matematika;MTK;SMP;3
+IPASMP;IPA;IPA;SMP;4
+PABSMP;Pendidikan Agama & Budi Pekerti;PAB;SMP;1
+IPSSMP;IPS;IPS;SMP;6
+BIDSMA;Bahasa Indonesia;BID;SMA;2
+BIDSMP;Bahasa Indonesia;BID;SMP;2
+BENSMA;Bahasa Inggris;BEN;SMA;5
+MTKSMA;Matematika;MTK;SMA;3
+IPASMA;IPA;IPA;SMA;4
+IPSSMA;IPS;IPS;SMA;6
+PABSMA;Pendidikan Agama & Budi Pekerti;PAB;SMA;1

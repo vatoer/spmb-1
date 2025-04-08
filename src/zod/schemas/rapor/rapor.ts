@@ -11,7 +11,7 @@ export enum MataPelajaran {
 
 // Define the schema for a single subject's score
 export const nilaiMapelSchema = z.object({
-  mataPelajaran: z.nativeEnum(MataPelajaran), //z.string(), // Subject name
+  mataPelajaran: z.string(), // Subject name
   nilai: z
     .number()
     .min(0, { message: "Nilai tidak boleh kurang dari 0" })

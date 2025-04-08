@@ -3,44 +3,49 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSidebar } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { simpanRapor } from "@/modules/pendaftaran/actions/rapor";
 import FormulirContainer from "@/modules/pendaftaran/ui/components/formulir/formulir-container";
-import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
-import { MataPelajaran, Rapor, raporSchema } from "@/zod/schemas/rapor/rapor";
+import { Rapor, raporSchema } from "@/zod/schemas/rapor/rapor";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader } from "lucide-react";
-import { FieldErrors, useForm } from "react-hook-form";
+import { MataPelajaran } from "@prisma-db-spmb/client";
+import { Control, FieldErrors, useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
+// const mataPelajaran = Object.values(MataPelajaran);
 
-const mataPelajaran = Object.values(MataPelajaran);
+interface RaporFormProps {
+  calonMuridId: string;
+  mataPelajaran: MataPelajaran[];
+}
 
-export const RaporForm = () => {
-  const { isMobile } = useSidebar();
+interface RaporFormExtProps {
+  form: UseFormReturn<Rapor>;
+  mataPelajaran: MataPelajaran[];
+}
 
-  if (isMobile) {
-    return <RaporFormMobile />;
-  }
-
-  return <RaporFormWeb />;
-};
-
-export const RaporFormWeb = () => {
+export const RaporForm = ({ calonMuridId, mataPelajaran }: RaporFormProps) => {
   const form = useForm<Rapor>({
     resolver: zodResolver(raporSchema),
     defaultValues: {
       semesters: Array.from({ length: 6 }, (_, i) => ({
         semester: i + 1,
         nilai: mataPelajaran.map((mapel) => ({
-          mataPelajaran: mapel,
+          mataPelajaran: mapel.id,
           nilai: 0,
         })),
       })),
     },
   });
-  const { handleSubmit, formState, control } = form;
-  const { isSubmitting, errors } = formState;
 
-  const onSubmit = (data: Rapor) => {
+  const { handleSubmit, formState } = form;
+  const { errors } = formState;
+
+  const onSubmit = async (data: Rapor) => {
+    const response = await simpanRapor(calonMuridId, data);
+    if (response.success) {
+      toast.success(response.message);
+    } else {
+      toast.error(response.message);
+    }
     console.log(data);
   };
 
@@ -51,139 +56,117 @@ export const RaporFormWeb = () => {
           className="w-full space-y-2 pb-24"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="flex flex-col items-center border border-gray-200 p-0">
-            <div className="w-full border-gray-200 flex items-center justify-center p-2">
-              <span className="font-semibold">Semester</span>
-            </div>
-            <div className="flex flex-row gap-0 w-full border-collapse">
-              <div className="border border-gray-200 flex items-center justify-start w-1/3 p-2">
-                <span className="font-semibold">Mata Pelajaran</span>
-              </div>
-              {Array.from({ length: 5 }, (_, i) => (
-                <div
-                  key={i}
-                  className="border border-gray-200 flex-1 flex justify-center items-center"
-                >
-                  <span>{i + 1}</span>
-                </div>
-              ))}
-            </div>
-
-            {mataPelajaran.map((mapel, i) => (
-              <div
-                key={i}
-                className="flex flex-row gap-0 w-full border-collapse"
-              >
-                <div className="border border-gray-200 flex items-center justify-start w-1/3 p-2">
-                  <span>{mapel}</span>
-                </div>
-                {Array.from({ length: 5 }, (_, j) => (
-                  <div
-                    key={i + "s" + j}
-                    className="border border-gray-200 flex-1"
-                  >
-                    <FormField
-                      control={form.control}
-                      name={`semesters.${j}.nilai.${i}.nilai`}
-                      render={({ field }) => (
-                        <FormItem className="h-full">
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min={0}
-                              max={100}
-                              placeholder="0"
-                              {...field}
-                              value={
-                                field.value === undefined || isNaN(field.value)
-                                  ? ""
-                                  : field.value
-                              }
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value === ""
-                                    ? ""
-                                    : Number(e.target.value)
-                                )
-                              }
-                              className="bg-background min-h-18 h-full border-none outline-none ring-0 rounded-none text-center focus-visible:ring-1 placeholder:text-muted-foreground"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    className="w-full h-full text-center"
-                  /> */}
-                  </div>
-                ))}
-              </div>
-            ))}
+          {/* Shared Fields */}
+          <div className="hidden md:block">
+            <RaporFormWebFields form={form} mataPelajaran={mataPelajaran} />
           </div>
-          {/* Error Display */}
-          <ErrorDisplay errors={errors} />
-          <div
-            className={cn(
-              "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
-            )}
+          <div className="">
+            <RaporFormMobileFields form={form} mataPelajaran={mataPelajaran} />
+          </div>
+
+          <Button
+            type="submit"
+            size={"lg"}
+            className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
           >
-            <Button
-              type="submit"
-              size={"lg"}
-              className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
-              disabled={isSubmitting}
-            >
-              <span className="text-sm font-semibold">Simpan Rapor</span>
-              {isSubmitting && <Loader className="animate-spin mr-2 h-4 w-4" />}
-            </Button>
-          </div>
+            Simpan Rapor
+          </Button>
         </form>
       </Form>
     </FormulirContainer>
   );
 };
 
-export const RaporFormMobile = () => {
-  const form = useForm();
-  const { handleSubmit, formState } = form;
-  const { isSubmitting } = formState;
+export const RaporFormWebFields = ({
+  mataPelajaran,
+  form,
+}: RaporFormExtProps) => {
   return (
-    <div className="flex flex-col w-full items-center">
-      <form className="w-full space-y-2 pb-24">
-        {Array.from({ length: 6 }, (_, i) => (
-          <Semester semester={i + 1} mapel={mataPelajaran} key={i} />
-        ))}
-        <CumulativeErrors errors={form.formState.errors} verbose />
-
-        <div
-          className={cn(
-            "flex flex-col sm:flex-row  justify-center sm:justify-end  gap-2 mt-12 "
-          )}
-        >
-          <Button
-            type="submit"
-            size={"lg"}
-            className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
-            disabled={isSubmitting}
-          >
-            <span className="text-sm font-semibold">Simpan Data Orang Tua</span>
-            {isSubmitting && <Loader className="animate-spin mr-2 h-4 w-4" />}
-          </Button>
+    <div className="flex flex-col items-center border border-gray-200 p-0">
+      <div className="w-full border-gray-200 flex items-center justify-center p-2">
+        <span className="font-semibold">Semester</span>
+      </div>
+      <div className="flex flex-row gap-0 w-full border-collapse">
+        <div className="border border-gray-200 flex items-center justify-start w-1/3 p-2">
+          <span className="font-semibold">Mata Pelajaran</span>
         </div>
-      </form>
+        {Array.from({ length: 6 }, (_, i) => (
+          <div
+            key={i}
+            className="border border-gray-200 flex-1 flex justify-center items-center"
+          >
+            <span>{i + 1}</span>
+          </div>
+        ))}
+      </div>
+
+      {mataPelajaran.map((mapel, i) => (
+        <div key={i} className="flex flex-row gap-0 w-full border-collapse">
+          <div className="border border-gray-200 flex items-center justify-start w-1/3 p-2">
+            <span>{mapel.nama}</span>
+          </div>
+          {Array.from({ length: 6 }, (_, j) => (
+            <div key={i + "s" + j} className="border border-gray-200 flex-1">
+              <FormField
+                control={form.control}
+                name={`semesters.${j}.nilai.${i}.nilai`}
+                render={({ field }) => (
+                  <FormItem className="h-full">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={100}
+                        placeholder="0"
+                        {...field}
+                        value={
+                          field.value === undefined || isNaN(field.value)
+                            ? ""
+                            : field.value
+                        }
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === "" ? "" : Number(e.target.value)
+                          )
+                        }
+                        className="bg-background min-h-18 h-full border-none outline-none ring-0 rounded-none text-center focus-visible:ring-1 placeholder:text-muted-foreground"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
+  );
+};
+
+export const RaporFormMobileFields = ({
+  mataPelajaran,
+  form,
+}: RaporFormExtProps) => {
+  return (
+    <>
+      {Array.from({ length: 6 }, (_, i) => (
+        <Semester
+          semester={i + 1}
+          mataPelajaran={mataPelajaran}
+          key={i}
+          control={form.control}
+        />
+      ))}
+    </>
   );
 };
 
 interface SemesterProps {
   semester: number;
-  mapel: string[];
+  mataPelajaran: MataPelajaran[];
+  control: Control<Rapor>;
 }
-const Semester = ({ semester }: SemesterProps) => {
+const Semester = ({ semester, mataPelajaran, control }: SemesterProps) => {
   return (
     <div className="flex flex-col items-center border border-gray-200 p-0">
       <div className="w-full border-gray-200 bg-gray-300 flex items-center justify-center">
@@ -195,14 +178,36 @@ const Semester = ({ semester }: SemesterProps) => {
           className="flex flex-row gap-0 w-full border-collapse justify-stretch"
         >
           <div className="border border-gray-200  w-2/3  flex items-center justify-start p-2">
-            {mapel}
+            {mapel.nama}
           </div>
           <div className="border border-gray-200 w-1/3">
-            <input
-              type="number"
-              min={0}
-              max={100}
-              className="w-full h-full p-2"
+            <FormField
+              control={control}
+              name={`semesters.${semester}.nilai.${i}.nilai`}
+              render={({ field }) => (
+                <FormItem className="h-full">
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={100}
+                      placeholder="0"
+                      {...field}
+                      value={
+                        field.value === undefined || isNaN(field.value)
+                          ? ""
+                          : field.value
+                      }
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? "" : Number(e.target.value)
+                        )
+                      }
+                      className="bg-background min-h-18 h-full border-none outline-none ring-0 rounded-none text-center focus-visible:ring-1 placeholder:text-muted-foreground"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
             />
           </div>
         </div>
@@ -217,7 +222,7 @@ interface ErrorDisplayProps {
 
 export const ErrorDisplay = ({ errors }: ErrorDisplayProps) => {
   const collectErrors = (errors: FieldErrors, parentKey = ""): string[] => {
-    let messages: string[] = [];
+    const messages: string[] = [];
 
     for (const key in errors) {
       const error = errors[key];
