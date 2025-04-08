@@ -57,22 +57,25 @@ export const RaporForm = ({ calonMuridId, mataPelajaran }: RaporFormProps) => {
           onSubmit={handleSubmit(onSubmit)}
         >
           {/* Shared Fields */}
-          <div className="hidden md:block">
+          <div className="hidden sm:block">
             <RaporFormWebFields form={form} mataPelajaran={mataPelajaran} />
           </div>
-          <div className="">
+          <div className="block sm:hidden">
             <RaporFormMobileFields form={form} mataPelajaran={mataPelajaran} />
           </div>
 
-          <Button
-            type="submit"
-            size={"lg"}
-            className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3"
-          >
-            Simpan Rapor
-          </Button>
+          <div className="flex flex-col items-end gap-2 w-full">
+            <Button
+              type="submit"
+              size={"lg"}
+              className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3 "
+            >
+              Simpan Rapor
+            </Button>
+          </div>
         </form>
       </Form>
+      <ErrorDisplay errors={errors} />
     </FormulirContainer>
   );
 };
@@ -121,12 +124,12 @@ export const RaporFormWebFields = ({
                         {...field}
                         value={
                           field.value === undefined || isNaN(field.value)
-                            ? ""
+                            ? 0
                             : field.value
                         }
                         onChange={(e) =>
                           field.onChange(
-                            e.target.value === "" ? "" : Number(e.target.value)
+                            e.target.value === "" ? 0 : Number(e.target.value)
                           )
                         }
                         className="bg-background min-h-18 h-full border-none outline-none ring-0 rounded-none text-center focus-visible:ring-1 placeholder:text-muted-foreground"
@@ -183,7 +186,7 @@ const Semester = ({ semester, mataPelajaran, control }: SemesterProps) => {
           <div className="border border-gray-200 w-1/3">
             <FormField
               control={control}
-              name={`semesters.${semester}.nilai.${i}.nilai`}
+              name={`semesters.${semester - 1}.nilai.${i}.nilai`}
               render={({ field }) => (
                 <FormItem className="h-full">
                   <FormControl>
@@ -231,16 +234,22 @@ export const ErrorDisplay = ({ errors }: ErrorDisplayProps) => {
 
       const path = parentKey ? `${parentKey}.${key}` : key;
 
-      if ("message" in error && error.message) {
-        messages.push(String(error.message));
-      }
+      if (typeof error === "object" && error !== null) {
+        if ("message" in error && typeof error.message === "string") {
+          messages.push(`${path}: ${error.message}`);
+        }
 
-      if ("types" in error && typeof error.types === "object") {
-        messages.push(...Object.values(error.types).map(String));
-      }
+        if ("types" in error && typeof error.types === "object") {
+          messages.push(
+            ...Object.values(error.types).map(
+              (typeMessage) => `${path}: ${typeMessage}`
+            )
+          );
+        }
 
-      if (typeof error === "object" && !Array.isArray(error)) {
-        messages.push(...collectErrors(error as FieldErrors, path));
+        if (!Array.isArray(error)) {
+          messages.push(...collectErrors(error as FieldErrors, path));
+        }
       }
 
       if (Array.isArray(error)) {

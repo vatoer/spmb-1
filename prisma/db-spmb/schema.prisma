@@ -181,7 +181,8 @@ model Nilai {
   id              String @id @default(cuid())
   mataPelajaranId String @map("mata_pelajaran_id") @db.VarChar
   calonMuridId    String @map("calon_murid_id") @db.VarChar
-  nilai           Int
+  nilai           Int    @default(0)
+  semester        Int    @default(0)
 
   createdBy String?   @map("created_by") @db.VarChar // user id
   updatedBy String?   @map("updated_by") @db.VarChar
