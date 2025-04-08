@@ -26,11 +26,13 @@ const PendaftaranBaruButton = () => {
 
   return (
     <Button
-      className="btn btn-primary hover:cursor-pointer w-full"
+      className="btn hover:cursor-pointer w-full sm:w-[300px] h-12 text"
       onClick={handleClick}
       disabled={submitting}
+      size={"lg"}
+      variant="outline"
     >
-      Isi Formulir Pendaftaran Baru
+      Buat Pendaftaran Baru
       {submitting && <Loader className="ml-2 animate-spin" />}
     </Button>
   );

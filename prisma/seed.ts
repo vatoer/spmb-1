@@ -25,6 +25,9 @@ const truncateBeforeSeed = async (): Promise<void> => {
   await dbSpmb.$executeRawUnsafe(
     `TRUNCATE TABLE "sekolah" RESTART IDENTITY CASCADE`
   );
+  await dbSpmb.$executeRawUnsafe(
+    `TRUNCATE TABLE "mata_pelajaran" RESTART IDENTITY CASCADE`
+  );
 
   console.log("Existing data deleted successfully");
 };
@@ -101,6 +104,43 @@ const seedSekolah = async (): Promise<void> => {
           }
 
           console.log("Data Sekolah seeded successfully");
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on("error", (error) => reject(error));
+  });
+};
+
+interface MataPelajaran {
+  id: string;
+  nama: string;
+  kode: string;
+  jenjang_dikdasmen: string;
+}
+
+const seedMataPelajaran = async (): Promise<void> => {
+  const csvPath = "prisma/db-spmb/csv-seed/mata_pelajaran.csv";
+  const results: MataPelajaran[] = [];
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(csvPath)
+      .pipe(csv({ separator: ";" }))
+      .on("data", (data) => results.push(data))
+      .on("end", async () => {
+        try {
+          for (const row of results) {
+            console.log("seeding mata pelajaran", row);
+            await dbSpmb.mataPelajaran.create({
+              data: {
+                id: row.id,
+                nama: row.nama,
+                kode: row.kode,
+                jenjangDikdasmen: row.jenjang_dikdasmen,
+              },
+            });
+          }
+          console.log("Data Mata Pelajaran seeded successfully");
           resolve();
         } catch (error) {
           reject(error);
@@ -279,6 +319,7 @@ const seedRentangPendapatan = async (): Promise<void> => {
 async function main() {
   console.log("Seeding data...");
   await truncateBeforeSeed();
+  await seedMataPelajaran();
   await seedSekolah();
   await seedWilayahAdministratif();
   await seedDapoWilayah();

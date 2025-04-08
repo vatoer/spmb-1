@@ -15,7 +15,7 @@ const FormulirPage = async () => {
 
   return (
     <div className="flex flex-col gap-4 w-full items-center justify-start p-2">
-      <div className="flex flex-col gap-2 w-full items-center justify-start sm:px-12">
+      <div className="flex flex-col gap-2 w-full items-center justify-start sm:px-12 md:max-w-2/3">
         <h1 className="text-2xl text-center font-semibold z-20 p-2">
           Formulir Pendaftaran
         </h1>
