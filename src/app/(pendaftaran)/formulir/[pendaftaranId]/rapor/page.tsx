@@ -1,6 +1,7 @@
 import { getMataPelajaranJenjangDikdasmen } from "@/data/common/mata-pelajaran";
 import {
   getPendaftaran,
+  getRaporCalonMurid,
   isPendaftaranWithCalonMurid,
 } from "@/data/pendaftaran/pendaftaran";
 import { auth } from "@/modules/auth/auth";
@@ -39,10 +40,19 @@ export default async function FormulirRaporPage({
     calonMurid.jenjangDikdasmen
   );
 
+  const defaultValuesRapor = await getRaporCalonMurid(
+    calonMurid.id,
+    mataPelajaran
+  );
+
   return (
     <div className="w-full flex flex-col justify-start items-start p-2 md:p-6">
       <BreadcrumbMobile pendaftaranId={pendaftaranId} title="Rapor" />
-      <RaporForm mataPelajaran={mataPelajaran} calonMuridId={calonMurid.id} />
+      <RaporForm
+        mataPelajaran={mataPelajaran}
+        calonMuridId={calonMurid.id}
+        defaultValuesRapor={defaultValuesRapor}
+      />
     </div>
   );
 }

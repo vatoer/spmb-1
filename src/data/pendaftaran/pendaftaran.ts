@@ -1,6 +1,7 @@
 import { dbSpmb } from "@/lib/db-spmb";
 import { DataDiri } from "@/zod/schemas/murid/murid";
 import { OrangTua as OrangTuaZod } from "@/zod/schemas/orang-tua/orang-tua";
+import { Rapor } from "@/zod/schemas/rapor/rapor";
 import { SekolahAsal } from "@/zod/schemas/sekolah/sekolah";
 import {
   Agama,
@@ -10,7 +11,13 @@ import {
   Kewarganegaraan,
   StatusDomisili,
 } from "@/zod/schemas/shared";
-import { CalonMurid, OrangTua, Pendaftaran } from "@prisma-db-spmb/client";
+import {
+  CalonMurid,
+  MataPelajaran,
+  Nilai,
+  OrangTua,
+  Pendaftaran,
+} from "@prisma-db-spmb/client";
 
 interface CalonMuridWithOrangTua extends CalonMurid {
   ayah?: OrangTua | null;
@@ -57,6 +64,67 @@ export function isPendaftaranWithCalonMurid(
     typeof pendaftaran === "object" &&
     "calonMurid" in pendaftaran
   );
+}
+
+export async function getRaporCalonMurid(
+  calonMuridId: string,
+  mataPelajaran: MataPelajaran[]
+): Promise<Rapor> {
+  const nilai = await dbSpmb.nilai.findMany({
+    where: {
+      calonMuridId,
+    },
+  });
+
+  return ensureRaporConformance(nilai, mataPelajaran);
+}
+
+function getDefaultRapor(mataPelajaran: MataPelajaran[]): Rapor {
+  return {
+    semesters: Array.from({ length: 6 }, (_, i) => ({
+      semester: i + 1,
+      nilai: mataPelajaran.map((mapel) => ({
+        mataPelajaran: mapel.id,
+        nilai: 0,
+      })),
+    })),
+  };
+}
+
+export function ensureRaporConformance(
+  nilaiArray: Nilai[] | null,
+  mataPelajaran: MataPelajaran[]
+): Rapor {
+  // Generate the default rapor structure
+  const defaultRapor = getDefaultRapor(mataPelajaran);
+
+  // Map database data to the Rapor schema format
+  const dbRapor = mapDbToZodRapor(nilaiArray);
+
+  // Merge database data with the default structure
+  const mergedRapor = {
+    semesters: defaultRapor.semesters.map((defaultSemester) => {
+      const dbSemester = dbRapor.semesters.find(
+        (s) => s.semester === defaultSemester.semester
+      );
+
+      return {
+        semester: defaultSemester.semester,
+        nilai: defaultSemester.nilai.map((defaultNilai) => {
+          const dbNilai = dbSemester?.nilai.find(
+            (n) => n.mataPelajaran === defaultNilai.mataPelajaran
+          );
+
+          return {
+            mataPelajaran: defaultNilai.mataPelajaran,
+            nilai: dbNilai?.nilai ?? defaultNilai.nilai, // Use database value if available, otherwise default
+          };
+        }),
+      };
+    }),
+  };
+
+  return mergedRapor;
 }
 
 export const mapDbToZodDataDiri = (
@@ -139,3 +207,34 @@ export const mapDbToZodSekolahAsal = (
     tahunLulus: pendaftaran.tahunLulusSekolahAsal || tahun,
   };
 };
+
+export function mapDbToZodRapor(nilaiArray?: Nilai[] | null): Rapor {
+  if (!nilaiArray || nilaiArray.length === 0) {
+    return { semesters: [] };
+  }
+
+  // Group the Nilai objects by semester
+  const groupedBySemester = nilaiArray.reduce<Record<number, Nilai[]>>(
+    (acc, nilai) => {
+      if (!acc[nilai.semester]) {
+        acc[nilai.semester] = [];
+      }
+      acc[nilai.semester].push(nilai);
+      return acc;
+    },
+    {}
+  );
+
+  // Map the grouped data to the Rapor schema format
+  const semesters = Object.entries(groupedBySemester).map(
+    ([semester, nilai]) => ({
+      semester: Number(semester),
+      nilai: nilai.map((mapel) => ({
+        mataPelajaran: mapel.mataPelajaranId,
+        nilai: mapel.nilai,
+      })),
+    })
+  );
+
+  return { semesters };
+}

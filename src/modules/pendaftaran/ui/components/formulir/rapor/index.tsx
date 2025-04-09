@@ -15,6 +15,7 @@ import { toast } from "sonner";
 interface RaporFormProps {
   calonMuridId: string;
   mataPelajaran: MataPelajaran[];
+  defaultValuesRapor: Rapor;
 }
 
 interface RaporFormExtProps {
@@ -22,18 +23,14 @@ interface RaporFormExtProps {
   mataPelajaran: MataPelajaran[];
 }
 
-export const RaporForm = ({ calonMuridId, mataPelajaran }: RaporFormProps) => {
+export const RaporForm = ({
+  calonMuridId,
+  mataPelajaran,
+  defaultValuesRapor,
+}: RaporFormProps) => {
   const form = useForm<Rapor>({
     resolver: zodResolver(raporSchema),
-    defaultValues: {
-      semesters: Array.from({ length: 6 }, (_, i) => ({
-        semester: i + 1,
-        nilai: mataPelajaran.map((mapel) => ({
-          mataPelajaran: mapel.id,
-          nilai: 0,
-        })),
-      })),
-    },
+    defaultValues: defaultValuesRapor,
   });
 
   const { handleSubmit, formState } = form;
