@@ -15,17 +15,29 @@ import CumulativeErrors from "@/modules/shared/ui/components/cumulative-error";
 import {
   DokumenPendaftaran,
   dokumenPendaftaranSchema,
+  FileDokumenPendaftaranKey,
 } from "@/zod/schemas/dokumen/dokumen";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+export interface DokumenPendaftaranUploadFields {
+  cuid: string;
+  key: FileDokumenPendaftaranKey;
+  label: string;
+  data: {
+    identifier: string;
+  };
+}
+
 interface UnggahDokumenFormProps {
+  pendaftaranId: string;
   defaultValuesDokumen: DokumenPendaftaran;
 }
 
 export const UnggahDokumenForm = ({
+  pendaftaranId,
   defaultValuesDokumen,
 }: UnggahDokumenFormProps) => {
   const form = useForm<DokumenPendaftaran>({
@@ -33,12 +45,56 @@ export const UnggahDokumenForm = ({
     defaultValues: defaultValuesDokumen,
   });
 
+  const fileDokumenKeys: DokumenPendaftaranUploadFields[] = [
+    {
+      cuid: pendaftaranId,
+      key: "fileKkCalonMurid",
+      label: "File KK Calon Murid",
+      data: {
+        identifier: "fileKkCalonMurid",
+      },
+    },
+    {
+      cuid: pendaftaranId,
+      key: "fileKkIbu",
+      label: "File KK Ibu",
+      data: {
+        identifier: "fileKkIbu",
+      },
+    },
+    {
+      cuid: pendaftaranId,
+      key: "fileKkAyah",
+      label: "File KK Ayah",
+      data: {
+        identifier: "fileKkAyah",
+      },
+    },
+    {
+      cuid: pendaftaranId,
+      key: "fileRapor",
+      label: "File Rapor",
+      data: {
+        identifier: "fileRapor",
+      },
+    },
+    {
+      cuid: pendaftaranId,
+      key: "fileSptjm",
+      label: "File SPTJM",
+      data: {
+        identifier: "fileSptjm",
+      },
+    },
+  ];
+
   const { handleSubmit, formState } = form;
   const { isSubmitting, errors } = formState;
 
   const handleUploadComplete = (name: string, file?: File | null) => {
     if (!file) return;
     toast.success(`File ${name} berhasil diupload`);
+    console.log("File uploaded:", fileDokumenKeys);
   };
 
   const handleFileChange = (file: File | null) => {
@@ -67,29 +123,30 @@ export const UnggahDokumenForm = ({
           className="w-full space-y-2 pb-24"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <FormField
-            control={form.control}
-            name="fileKkCalonMurid"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="fileKkCalonMurid">
-                  Upload KK calon murid
-                </FormLabel>
-                <FormControl>
-                  <FormFileImmediateUpload
-                    cuid={"buktiPembayaranCuid"}
-                    folder={"riwayatPengajuanId"}
-                    name={field.name}
-                    onFileChange={handleFileChange}
-                    onFileUploadComplete={handleUploadComplete}
-                    className="bg-white"
-                    additionalData={{ test: "super" }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {fileDokumenKeys.map((dokumen) => (
+            <FormField
+              key={dokumen.key} // Add a unique key for each element
+              control={form.control}
+              name={dokumen.key}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor={dokumen.key}>{dokumen.label}</FormLabel>
+                  <FormControl>
+                    <FormFileImmediateUpload
+                      cuid={dokumen.cuid}
+                      name={field.name}
+                      onFileChange={handleFileChange}
+                      onFileUploadComplete={handleUploadComplete}
+                      className="bg-white"
+                      additionalData={dokumen.data}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+
           <CumulativeErrors errors={errors} />
           <div
             className={cn(

@@ -18,15 +18,15 @@ export const LINKS = [
       "Data sekolah asal calon murid baru terdiri atas NPSN, nama sekolah, alamat",
   },
   {
+    href: `rapor`,
+    title: "Rapor",
+    description: "Data rapor 3 tahun terakhir.",
+  },
+  {
     href: `unggah-dokumen`,
     title: "Unggah Dokumen",
     description:
       "Unggah dokumen yang diperlukan untuk pendaftaran calon murid baru.",
-  },
-  {
-    href: `rapor`,
-    title: "Rapor",
-    description: "Data rapor 3 tahun terakhir.",
   },
   {
     href: `sekolah-tujuan`,

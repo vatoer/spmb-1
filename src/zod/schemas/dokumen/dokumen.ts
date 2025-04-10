@@ -31,12 +31,12 @@ export const fileDkumenPendaftaranSchema = z.object({
     message: "Silakan pilih file KK Ayah",
     allowedTypes: ["application/pdf"],
   }),
-  FileRapor: fileSchema({
+  fileRapor: fileSchema({
     required: true,
     message: "Silakan pilih file rapor",
     allowedTypes: ["application/pdf"],
   }),
-  FileSptjm: fileSchema({
+  fileSptjm: fileSchema({
     required: true,
     message: "Silakan pilih file SPTJM",
     allowedTypes: ["application/pdf"],

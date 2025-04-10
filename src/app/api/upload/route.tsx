@@ -9,14 +9,16 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.formData();
 
+    console.log("formData", data);
+
     //const filename = data.get("filename") as string;
 
     const file = data.get("file") as File;
+    const cuid = data.get("cuid") as string;
+    console.log("cuid", cuid);
     const filename = file.name;
     console.log("filename", filename);
-    const folderIdentifier = "x";
-    // const folderIdentifier = data.get("folder") as string; // folder identifier is kegiatanId
-    // check if file have extension
+    const folderIdentifier = data.get("identifier") as string;
 
     const hasFileExtension = getFileExtension(filename);
     let uniqueFilename;

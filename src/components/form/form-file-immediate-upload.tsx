@@ -1,9 +1,11 @@
 "use client";
 import { Progress } from "@/components/form/progress";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { createId } from "@paralleldrive/cuid2";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Controller,
   ControllerRenderProps,
@@ -11,13 +13,10 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 
 interface FormFileImmediateUploadProps {
   name: string;
   cuid?: string;
-  folder?: string;
   onFileChange?: (
     file: File | null,
     field: ControllerRenderProps<FieldValues, string>
@@ -40,6 +39,7 @@ export const FormFileImmediateUpload = ({
   className,
   allowedTypes = ["application/pdf"],
   placeholder = "No file selected, please choose a file",
+  additionalData,
   endpoint = "/api/upload",
 }: //ref,
 FormFileImmediateUploadProps) => {
@@ -47,9 +47,9 @@ FormFileImmediateUploadProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [percentCompleted, setPercentCompleted] = useState(0);
 
-  useEffect(() => {
-    setPercentCompleted(0);
-  }, [cuid]);
+  // useEffect(() => {
+  //   setPercentCompleted(0);
+  // }, []);
 
   // Watch the field value to display previously saved file
   const currentFile = watch(name) as File | undefined;
@@ -74,12 +74,23 @@ FormFileImmediateUploadProps) => {
       onFileChange?.(selectedFile, field); // update the parent component
     }
   };
+
   const handleImmediateUpload = async (
     file: File,
     field: ControllerRenderProps<FieldValues, string>
   ) => {
+    setPercentCompleted(0);
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("cuid", cuid);
+
+    // Append additional data if provided
+    if (additionalData) {
+      Object.entries(additionalData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
+
     try {
       const response = await axios.post(endpoint, formData, {
         headers: {
@@ -102,7 +113,7 @@ FormFileImmediateUploadProps) => {
       });
 
       if (response.status === 200) {
-        toast.info(`File ${file.name} uploaded successfully:`);
+        // toast.info(`File ${file.name} uploaded successfully:`);
         onFileUploadComplete(name, file);
         // Update the UI to reflect the successful upload
       } else {
