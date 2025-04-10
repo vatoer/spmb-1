@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { simpanRapor } from "@/modules/pendaftaran/actions/rapor";
 import FormulirContainer from "@/modules/pendaftaran/ui/components/formulir/formulir-container";
 import { Rapor, raporSchema } from "@/zod/schemas/rapor/rapor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MataPelajaran } from "@prisma-db-spmb/client";
+import { Loader } from "lucide-react";
 import { Control, FieldErrors, useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 // const mataPelajaran = Object.values(MataPelajaran);
@@ -34,7 +36,7 @@ export const RaporForm = ({
   });
 
   const { handleSubmit, formState } = form;
-  const { errors } = formState;
+  const { errors, isSubmitting } = formState;
 
   const onSubmit = async (data: Rapor) => {
     const response = await simpanRapor(calonMuridId, data);
@@ -66,8 +68,14 @@ export const RaporForm = ({
               type="submit"
               size={"lg"}
               className="hover:cursor-pointer w-full sm:w-1/2 md:w-1/3 "
+              disabled={isSubmitting}
             >
               Simpan Rapor
+              <Loader
+                className={cn(isSubmitting ? "animate-spin" : "hidden")}
+                strokeWidth={2}
+                color="currentColor"
+              />
             </Button>
           </div>
         </form>
