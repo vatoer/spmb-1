@@ -18,33 +18,14 @@ export async function POST(req: NextRequest) {
     console.log("cuid", cuid);
     const filename = file.name;
     console.log("filename", filename);
-    const folderIdentifier = data.get("identifier") as string;
+    const identifier = data.get("identifier") as string;
 
-    const hasFileExtension = getFileExtension(filename);
-    let uniqueFilename;
-    if (hasFileExtension) {
-      console.log("hasFileExtension", hasFileExtension);
-      const fileExtension = extname(file.name);
-      const isSameExtension = fileExtension === hasFileExtension;
-      console.log("isSameExtension", isSameExtension);
-      // do not add extension if it is the same
-      uniqueFilename = filename;
-    } else {
-      const fileExtension = extname(file.name);
-      uniqueFilename = `${filename}${fileExtension}`;
-    }
+    const fileExtension = extname(file.name);
 
-    const fileExtension1 = extname(file.name);
-    const fileExtension2 = extname(filename);
-
-    if (fileExtension1 !== fileExtension2) {
-      uniqueFilename = `${filename}${fileExtension1}`;
-    } else {
-      uniqueFilename = filename;
-    }
+    const uniqueFilename = `${identifier}${fileExtension}`; // Generate a unique filename using cuid
 
     // base path will be mange on save.ts
-    const filesFolder = path.posix.join("temp", folderIdentifier);
+    const filesFolder = path.posix.join("temp", cuid);
 
     const allowedMimeTypes = [
       "application/pdf",
