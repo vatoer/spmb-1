@@ -66,7 +66,3 @@ export async function POST(req: NextRequest) {
     console.log("Upload complete");
   }
 }
-
-function getFileExtension(filename: string) {
-  return filename.split(".").pop();
-}

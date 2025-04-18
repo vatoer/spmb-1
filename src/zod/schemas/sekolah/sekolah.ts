@@ -27,3 +27,13 @@ export const sekolahAsalSchema = z.object({
 });
 
 export type SekolahAsal = z.infer<typeof sekolahAsalSchema>;
+
+export const sekolahTujuanSchema = z.object({
+  npsn: z
+    .string()
+    .min(8, { message: "NPSN harus 8 karakter" })
+    .max(8, { message: "NPSN harus 8 karakter" })
+    .regex(/^\d+$/, { message: "NPSN harus berupa angka" }),
+});
+
+export type SekolahTujuan = z.infer<typeof sekolahTujuanSchema>;
